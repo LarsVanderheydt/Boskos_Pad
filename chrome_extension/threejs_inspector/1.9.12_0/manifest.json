@@ -1,0 +1,27 @@
+{
+   "background": {
+      "scripts": [ "scripts/background.js" ]
+   },
+   "content_scripts": [ {
+      "all_frames": true,
+      "js": [ "scripts/content_script.js" ],
+      "matches": [ "\u003Call_urls>" ],
+      "run_at": "document_end"
+   } ],
+   "content_security_policy": "default-src 'self' chrome-extension-resource: ; img-src * data:; style-src 'self' 'unsafe-inline'; script-src 'self' 'unsafe-eval'; connect-src *; frame-src *;",
+   "description": "Three.js Inspector is an extension to inspect three.js page. It allow to interact with almost all three.js demos out there.",
+   "devtools_page": "devtools.html",
+   "icons": {
+      "128": "images/icon_128.png",
+      "16": "images/icon_16.png",
+      "48": "images/icon_48.png"
+   },
+   "key": "MIIBIjANBgkqhkiG9w0BAQEFAAOCAQ8AMIIBCgKCAQEAjE+7Rn7I1/EgEpek6ksNzMt3FdY4N4rr922d2iqBzW7wKH9RLDlOGbCeJhQ2qF1/jchfHKL1CJwNK7hruTPGKBWkkxECsTseMdcYDeDAt4mOmki+AdlwUAZeYUs+jnuPPn2e5ucMZUHe2HHVIHqbOQuWlqU00tj9axfYUSPV6qvOsW/c6/9ifaNYQ/aAf9v34n8apw0IVa3TsZ/J/jlaTNaxw7AmgsVNdzqSRAshE/o1kEr5kjWP5WB9d5PX8citegrC378KShUYcxB9q5pEQ27B96sVNecpAbtoHjsocWCH9aPV0fQgIS+nwNqHh6rkpXiGdr2DPmbTn1J/S6E8twIDAQAB",
+   "manifest_version": 2,
+   "name": "three.js inspector",
+   "permissions": [ "http://*/*", "https://*/*", "webNavigation", "tabs" ],
+   "short_name": "3jsInspect",
+   "update_url": "https://clients2.google.com/service/update2/crx",
+   "version": "1.9.12",
+   "web_accessible_resources": [ "*" ]
+}

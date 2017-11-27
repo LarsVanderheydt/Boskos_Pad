@@ -40,58 +40,58 @@ const init = () => {
   // light
   createLight();
 
-  const loader = new THREE.ObjectLoader().load("./js/models/track.json",
-  (geometry, materials) => {
-    const material = new THREE.MultiMaterial(materials);
-    mesh = new THREE.Mesh(geometry, material);
-    scene.add(mesh);
-  });
+  // const loader = new THREE.ObjectLoader().load("./js/models/track.json",
+  // (geometry, materials) => {
+  //   const material = new THREE.MultiMaterial(materials);
+  //   mesh = new THREE.Mesh(geometry, material);
+  //   scene.add(mesh);
+  // });
 
   // objects
   // document.addEventListener(`mousemove`,  handleMouseMove, false);
 
   // instantiate a loader
-  // const loader = new THREE.OBJLoader();
+  const loader = new THREE.OBJLoader();
   //
   // // load a resource
-  // loader.load(
-  //   // resource URL
-  //   './js/models/svg_track.obj',
-  //   // called when resource is loaded
-  //   object => {
-  //     // object.name = 'Object';
-  //     // object.position.set(2.4, 1.54, -3.4);
-  //     object.position.y = 1.1;
-  //
-  //     object.children[1].material.color.setHex(0xFFC183);
-  //     // object.children[0].visible = false;
-  //
-  //     // object.children.forEach(obj => {
-  //     //   obj.castShadow = true;
-  //     //   obj.receiveShadow = true;
-  //     // });
-  //
-  //     object.rotation.y = 1.58;
-  //
-  //     object.castShadow = true;
-  //     object.receiveShadow = true;
-  //
-  //     object.scale.x = 1.34;
-  //     object.scale.y = 1.34;
-  //     object.scale.z = 1.34;
-  //
-  //     scene.add(object);
-  //    },
-  //    // called when loading is in progresses
-  //    xhr => {
-  //      console.error( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-  //    },
-  //
-  //    // called when loading has errors
-  //    error => {
-  //      console.log( 'An error happened' );
-  //    }
-  // );
+  loader.load(
+    // resource URL
+    './js/models/svg_track.obj',
+    // called when resource is loaded
+    object => {
+      // object.name = 'Object';
+      // object.position.set(2.4, 1.54, -3.4);
+      object.position.y = 1.1;
+
+      object.children[1].material.color.setHex(0xFFC183);
+      // object.children[0].visible = false;
+
+      // object.children.forEach(obj => {
+      //   obj.castShadow = true;
+      //   obj.receiveShadow = true;
+      // });
+
+      object.rotation.y = 1.58;
+
+      object.castShadow = true;
+      object.receiveShadow = true;
+
+      object.scale.x = 1.34;
+      object.scale.y = 1.34;
+      object.scale.z = 1.34;
+
+      scene.add(object);
+     },
+     // called when loading is in progresses
+     xhr => {
+       console.error( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+     },
+
+     // called when loading has errors
+     error => {
+       console.log( 'An error happened' );
+     }
+  );
 
 
 

@@ -61,35 +61,40 @@ const init = () => {
     object => {
       // object.name = 'Object';
       // object.position.set(2.4, 1.54, -3.4);
+      object.position.x = 11.84;
       object.position.y = 1.1;
+      object.position.z = 6.66;
 
-      object.children[1].material.color.setHex(0xFFC183);
-      // object.children[0].visible = false;
+      object.rotation.y = 9.36;
 
-      // object.children.forEach(obj => {
-      //   obj.castShadow = true;
-      //   obj.receiveShadow = true;
-      // });
+      object.scale.x = 9.12;
+      object.scale.y = 9.12;
+      object.scale.z = 9.12;
 
-      object.rotation.y = 1.58;
+      for (let i = 0; i < 5; i++) {
+        object.children[i].material.color.setHex(0x555555);
+      }
+
+      object.children.forEach(obj => {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      });
+
+      object.children[5].material.color.setHex(0xCBBFBD);
 
       object.castShadow = true;
       object.receiveShadow = true;
-
-      object.scale.x = 1.34;
-      object.scale.y = 1.34;
-      object.scale.z = 1.34;
 
       scene.add(object);
      },
      // called when loading is in progresses
      xhr => {
-       console.error( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+       console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
      },
 
      // called when loading has errors
      error => {
-       console.log( 'An error happened' );
+       console.error( 'An error happened' );
      }
   );
 
@@ -153,7 +158,7 @@ const createScene = () => {
   renderer.setSize(WIDTH, HEIGHT);
 
   // options are THREE.BasicShadowMap | THREE.PCFShadowMap | THREE.PCFSoftShadowMap
-  renderer.shadowMapType = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.Type = THREE.PCFShadowMap;
 
   // shadow rendering
   renderer.shadowMap.enabled = true;
@@ -202,8 +207,8 @@ const createLight = () => {
   shadowLight.shadow.mapSize.width = 2048;
   shadowLight.shadow.mapSize.height = 2048;
 
-  shadowLight.shadow.mapSize.width = 1024; // default is 512
-  shadowLight.shadow.mapSize.height = 1024; // default is 512
+  // shadowLight.shadow.mapSize.width = 1024; // default is 512
+  // shadowLight.shadow.mapSize.height = 1024; // default is 512
 
 
   scene.add(shadowLight);

@@ -1,67 +1,54 @@
 const Colors = require('../objects/Colors');
 class Road {
   constructor() {
+    const loader = new THREE.OBJLoader();
+
     this.mesh = new THREE.Object3D();
     this.mesh.name = 'Road';
+    // load a resource
+    loader.load(
+      // resource URL
+      './js/models/svg_track.obj',
+      // called when resource is loaded
+      object => {
+        // object.name = 'Object';
+        // object.position.set(2.4, 1.54, -3.4);
+        object.position.x = 80.74;
+        object.position.y = 1.1;
+        object.position.z = 40;
 
-    this.firstStraight();
-    this.firstDown();
-    this.firstUp();
+        object.rotation.y = 9.36;
 
-    this.mesh.position.x = -8.5;
-    this.mesh.castShadow = true;
-    this.mesh.receiveShadow = true;
-  }
+        object.scale.x = 62.74;
+        object.scale.y = 62.74;
+        object.scale.z = 62.74;
 
-  firstStraight() {
-    const geom = new THREE.BoxGeometry(6, 4, 1, 2);
-    // geom.applyMatrix(new THREE.Matrix4().translate(0, 0, 0));
-    geom.mergeVertices();
-    const l = geom.vertices.length;
-    // geom.vertices[0].x = 0.5;
+        for (let i = 0; i < 5; i++) {
+          object.children[i].material.color.setHex(0x555555);
+        }
 
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.blue
-    });
-    const m = new THREE.Mesh(geom, mat);
-    m.name = 'First Straight';
-    this.mesh.add(m);
-  }
+        object.children.forEach(obj => {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+        });
 
-  firstDown() {
-    const geom = new THREE.BoxGeometry(6, 4, 1, 2);
-    geom.mergeVertices();
-    const l = geom.vertices.length;
+        object.children[5].material.color.setHex(0xCBBFBD);
 
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.blue
-    });
-    const m = new THREE.Mesh(geom, mat);
-    m.name = 'First Down';
+        object.castShadow = true;
+        object.receiveShadow = true;
 
-    m.position.x = 4.4;
-    m.position.z = 2.1;
+        this.mesh.add(object);
+       },
+       // called when loading is in progresses
+       xhr => {
+         console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
+       },
 
-    m.rotation.y = -45 * Math.PI / 180;
-    this.mesh.add(m);
-  }
-
-  firstUp() {
-    const geom = new THREE.BoxGeometry(6, 4, 1, 2);
-    geom.mergeVertices();
-    const l = geom.vertices.length;
-
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.blue
-    });
-    const m = new THREE.Mesh(geom, mat);
-    m.name = 'First Up';
-
-    m.position.x = 4.4;
-    m.position.z = -2.1;
-
-    m.rotation.y = 45 * Math.PI / 180;
-    this.mesh.add(m);
+       // called when loading has errors
+       error => {
+         console.error( 'An error happened' );
+       }
+    );
   }
 }
 

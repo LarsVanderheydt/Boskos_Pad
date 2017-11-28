@@ -36,67 +36,15 @@ let mousePos = {x: 0, y: 0};
 const init = () => {
   // camera & render
   createScene();
-
+  var controls = new THREE.OrbitControls( camera );
   // light
   createLight();
-
-  // const loader = new THREE.ObjectLoader().load("./js/models/track.json",
-  // (geometry, materials) => {
-  //   const material = new THREE.MultiMaterial(materials);
-  //   mesh = new THREE.Mesh(geometry, material);
-  //   scene.add(mesh);
-  // });
 
   // objects
   // document.addEventListener(`mousemove`,  handleMouseMove, false);
 
   // instantiate a loader
-  const loader = new THREE.OBJLoader();
-  //
-  // // load a resource
-  loader.load(
-    // resource URL
-    './js/models/svg_track.obj',
-    // called when resource is loaded
-    object => {
-      // object.name = 'Object';
-      // object.position.set(2.4, 1.54, -3.4);
-      object.position.x = 11.84;
-      object.position.y = 1.1;
-      object.position.z = 6.66;
 
-      object.rotation.y = 9.36;
-
-      object.scale.x = 9.12;
-      object.scale.y = 9.12;
-      object.scale.z = 9.12;
-
-      for (let i = 0; i < 5; i++) {
-        object.children[i].material.color.setHex(0x555555);
-      }
-
-      object.children.forEach(obj => {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      });
-
-      object.children[5].material.color.setHex(0xCBBFBD);
-
-      object.castShadow = true;
-      object.receiveShadow = true;
-
-      scene.add(object);
-     },
-     // called when loading is in progresses
-     xhr => {
-       console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-     },
-
-     // called when loading has errors
-     error => {
-       console.error( 'An error happened' );
-     }
-  );
 
 
 
@@ -105,8 +53,8 @@ const init = () => {
   scene.add(floor.mesh);
   scene.name = 'Scene';
 
-  // road = new Road();
-  // scene.add(road.mesh);
+  road = new Road();
+  scene.add(road.mesh);
   loop();
 }
 
@@ -138,8 +86,8 @@ const createScene = () => {
   // camera.position.y = 100;
   // camera.position.z = 200;
 
-  camera.position.y = 79;
-  camera.position.z = 14;
+  camera.position.y = 500;
+  camera.position.z = 200;
   // camera.rotation.x = -90 * Math.PI / 180;
   camera.rotation.x = -80 * Math.PI / 180;
 
@@ -191,7 +139,7 @@ const createLight = () => {
   shadowLight = new THREE.DirectionalLight(0xffffff, .9);
   shadowLight.name = 'Shadow Light';
   // direction of light
-  shadowLight.position.set(5.5, 7.6, 7);
+  shadowLight.position.set(150, 350, 350);
 
   // allow shadow casting
   shadowLight.castShadow = true;

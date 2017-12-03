@@ -1,8 +1,8 @@
 const Colors = require('./objects/Colors');
 
 const Floor = require('./classes/Floor');
-const Road = require('./classes/Road');
 const Car = require('./classes/Car');
+const Road = require('./classes/Road');
 
 const five = require('johnny-five');
 const board = new five.Board();
@@ -24,47 +24,35 @@ process.__defineGetter__('stdin', () => {
   return process.__stdin;
 });
 
+board.on("ready", () => {
+  const myLed = new LedClass(13);
+  myLed.blinking(500);
+});
+
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
 let floor, car;
+let world;
+
 let mousePos = {x: 0, y: 0};
 
 const init = () => {
+  exampleUtils.initialize();
   // camera & render
   createScene();
-  scene.name = 'Scene';
-
-  // const controls = new THREE.OrbitControls( camera );
+  // var controls = new THREE.OrbitControls( camera );
   // light
   createLight();
 
-  // objects
-  // document.addEventListener(`mousemove`,  handleMouseMove, false);
-
-  floor = new Floor();
-  floor.name = 'Floor';
-  scene.add(floor.mesh);
-
   car = new Car();
-  car.mesh.position.x = 79;
-  car.mesh.position.y = 2;
-  // car.mesh.position.z = -0.5;
-  car.mesh.position.z = 41;
-  car.mesh.rotation.y = 9.36;
-  car.name = 'Car';
-  scene.add(car.mesh);
-
+  floor = new Floor();
   road = new Road();
-  scene.add(road.mesh);
+
+  // scene.add(road.mesh);
+  scene.name = 'Scene';
 
   loop();
 }
-
-// const handleMouseMove = e => {
-//   const tx = -1 + (e.clientX / WIDTH) *2;
-//   const ty = 1 - (e.clientY / HEIGHT) *2;
-//   mousePos = {x: tx, y: ty};
-// }
 
 const createScene = () => {
   HEIGHT = window.innerHeight;
@@ -72,7 +60,7 @@ const createScene = () => {
 
   // create scene and fog
   scene = new THREE.Scene();
-  //scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
+  // scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
 
   // create camera
   aspectRatio = WIDTH / HEIGHT;
@@ -83,21 +71,31 @@ const createScene = () => {
     fieldOfView, aspectRatio, nearPlane, farPlane
   );
 
-  camera.position.y = 500;
-  camera.position.z = 85;
+  camera.position.y = 600;
+  camera.position.z = 100;
+  camera.position.x = 80;
+  // camera.position.z = 200;
   // camera.rotation.x = -90 * Math.PI / 180;
   camera.rotation.x = -80 * Math.PI / 180;
 
   // create renderer
   renderer = new THREE.WebGLRenderer({
+    // Allow transparency to show the gradient background
+    // we defined in the CSS
     alpha: true,
+
+    // Activate the anti-aliasing; this is less performant,
+    // but, as our project is low-poly based, it should be fine :)
     antialias: true
   });
 
+  // set size of renderer
   renderer.setSize(WIDTH, HEIGHT);
 
   // options are THREE.BasicShadowMap | THREE.PCFShadowMap | THREE.PCFSoftShadowMap
   renderer.shadowMap.Type = THREE.PCFShadowMap;
+
+  // shadow rendering
   renderer.shadowMap.enabled = true;
 
   container = document.querySelector('.world');
@@ -115,12 +113,16 @@ const handleWindowResize = () => {
 }
 
 const createLight = () => {
+  // A hemisphere light is a gradient colored light;
+  // the first parameter is the sky color, the second parameter is the ground color,
+  // the third parameter is the intensity of the light
   hemisphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000, .9);
   hemisphereLight.name = 'hemisphere Light';
 
   ambientLight = new THREE.AmbientLight(0xdc8874, .5);
   ambientLight.name = 'Ambient Light';
-
+  // A directional light shines from a specific direction.
+  // It acts like the sun, that means that all the rays produced are parallel.
   shadowLight = new THREE.DirectionalLight(0xffffff, .9);
   shadowLight.name = 'Shadow Light';
   // direction of light
@@ -140,9 +142,6 @@ const createLight = () => {
   shadowLight.shadow.mapSize.width = 2048;
   shadowLight.shadow.mapSize.height = 2048;
 
-  // shadowLight.shadow.mapSize.width = 1024; // default is 512
-  // shadowLight.shadow.mapSize.height = 1024; // default is 512
-
   scene.add(shadowLight);
   scene.add(hemisphereLight);
   scene.add(ambientLight);
@@ -157,27 +156,15 @@ const normalize = (v, vmin, vmax, tmin, tmax) => {
   return tv;
 }
 
-window.addEventListener(`keydown`, e => {
-  switch (e.key) {
-    case 'ArrowLeft':
-    if (car.ride.getEffectiveTimeScale() === 0) car.ride.reset();
-    car.ride.timeScale = 1;
-    car.ride.play();
-      break;
-
-    case 'ArrowRight':
-    car.ride.timeScale = -1;
-      break;
-    default:
-
-  }
-}, true);
-
-
 const loop = () => {
-  car.animation(car.mesh);
+  exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
+
+window.addEventListener(`keydown`, e => {
+  car.controls(e);
+}, true);
+
 
 init();

@@ -1,50 +1,45 @@
 const Colors = require('../objects/Colors');
-const speed = 1;
-let m, mixer;
-let prevTime = Date.now();
+let m;
+let speed = 0.6;
+const car = {};
 
 class Car {
   constructor() {
-    this.mesh = new THREE.Object3D();
-    this.mesh.name = 'Car';
-
-    // instantiate a loader
-    const loader = new THREE.JSONLoader();
-
-    loader.load('./js/models/car.json', (geometry, materials) => {
-
-      // geometry.applyMatrix( new THREE.Matrix4().makeTranslation( -2, 0, -42 ) );
-
-      const material = new THREE.MeshLambertMaterial({
-        morphTargets: true,
-        color: Colors.blue
-      });
-
-      m = new THREE.Mesh(geometry, material);
-      m.name = 'My Car';
-
-      // m.geometry.center();
-      // m.geometry.verticesNeedUpdate = true;
-
-      this.mesh.add(m);
-
-      //MIXER
-      mixer = new THREE.AnimationMixer(m);
-
-      const clip = THREE.AnimationClip.CreateFromMorphTargetSequence('ride', geometry.morphTargets, 30, true);
-      this.ride = mixer.clipAction(clip);
-      this.ride.clampWhenFinished = true;
-      this.ride.setDuration(5);
-      this.ride.setLoop(THREE.LoopOnce);
+    const geom = new THREE.BoxGeometry(5, 2, 3);
+    const mat = new THREE.MeshPhongMaterial({
+      color: Colors.red
     });
+
+    // this.m = exampleUtils.createBox( 3, 1, 2, 1, mat );
+    this.m = exampleUtils.createBox( 1.5, 1, 1, 100, mat );
+    // this.m = new THREE.Mesh(geom, mat);
+
+    // this.m.castShadow = true;
+    // this.m.receiveShadow = true;
+
+    this.m.goblin.position.y = 7;
+    // this.m.goblin.linear_velocity.y = 15;
+    this.m.goblin.linear_velocity.y = 2;
+
+    this.m.name = 'Car';
+    scene.add(this.m);
   }
 
-  animation(mesh) {
-    if (mixer) {
-      var time = Date.now();
-      mixer.update((time - prevTime) * 0.001);
-      prevTime = time;
+  controls(e) {
+    // console.log(this.m);
+    this.m.__dirtyPosition = true;
+    if (e.key === 'ArrowLeft') {
+      this.m.goblin.position.x -= speed;
+      // this.m.position.x -= speed;
+    } else if (e.key === 'ArrowUp') {
+      this.m.goblin.position.z -= speed;
+    } else if (e.key === 'ArrowRight') {
+      this.m.goblin.position.x += speed;
+
+    } else if (e.key === 'ArrowDown') {
+      this.m.goblin.position.z += speed;
     }
+
   }
 }
 

@@ -1,54 +1,56 @@
 const Colors = require('../objects/Colors');
+const loader = new THREE.OBJLoader();
+const JSONloader = new THREE.JSONLoader();
+
 class Road {
   constructor() {
-    const loader = new THREE.OBJLoader();
+    JSONloader.load("./js/models/road/ground.json", geometry => {
+      const mat = new THREE.MeshPhongMaterial({
+        color: Colors.white
+      });
+      const m = new THREE.Mesh(geometry, mat);
+      m.name = 'Road';
+      m.position.y = -1.40;
+      scene.add(m);
+    });
 
-    this.mesh = new THREE.Object3D();
-    this.mesh.name = 'Road';
-    // load a resource
-    loader.load(
-      // resource URL
-      './js/models/svg_track.obj',
-      // called when resource is loaded
-      object => {
-        // object.name = 'Object';
-        // object.position.set(2.4, 1.54, -3.4);
-        object.position.x = 80.74;
-        object.position.y = 1.1;
-        object.position.z = 40;
+    this.loadRoad("./js/models/road/top.json");
+    this.loadRoad("./js/models/road/bottom.json");
+    this.loadRoad("./js/models/road/left.json");
+    this.loadRoad("./js/models/road/right.json");
+    this.loadRoad("./js/models/road/middle.json");
+  }
 
-        object.rotation.y = 9.36;
+  loadRoad(url) {
+    JSONloader.load(url, geometry => {
+      const mat = new THREE.MeshPhongMaterial({
+        color: Colors.blue
+      });
 
-        object.scale.x = 62.74;
-        object.scale.y = 62.74;
-        object.scale.z = 62.74;
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.name = 'mesh';
 
-        for (let i = 0; i < 5; i++) {
-          object.children[i].material.color.setHex(0x555555);
-        }
+      mesh.castShadow = mesh.receiveShadow = true;
+      scene.add(mesh);
+      var shape = new Goblin.MeshShape(
+        mesh.geometry.vertices.map(function( vertex ){
+          return new Goblin.Vector3( vertex.x, vertex.y, vertex.z );
+        }),
+        mesh.geometry.faces.reduce(
+          function( faces, face ) {
+            faces.push( face.a, face.b, face.c );
+            return faces;
+          },[]
+        )
+      );
 
-        object.children.forEach(obj => {
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-        });
+      mesh.goblin = new Goblin.RigidBody(shape, 0);
+      mesh.goblin.position.y = 1;
 
-        object.children[5].material.color.setHex(0xCBBFBD);
-
-        object.castShadow = true;
-        object.receiveShadow = true;
-
-        this.mesh.add(object);
-       },
-       // called when loading is in progresses
-       xhr => {
-         console.log( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-       },
-
-       // called when loading has errors
-       error => {
-         console.error( 'An error happened' );
-       }
-    );
+      exampleUtils.objects.push(mesh);
+      scene.add(mesh);
+      exampleUtils.world.addRigidBody(mesh.goblin);
+    });
   }
 }
 

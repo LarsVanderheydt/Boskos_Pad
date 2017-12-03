@@ -16,10 +16,6 @@ class Floor {
     m.receiveShadow = true;
     m.name = 'Floor';
 
-    m.position.x = 0;
-    m.position.y = 0;
-    m.position.z = 0;
-
     this.mesh.castShadow = true;
     this.mesh.receiveShadow = true;
     this.mesh.add(m);

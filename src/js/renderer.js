@@ -2,6 +2,7 @@ const Colors = require('./objects/Colors');
 
 const Floor = require('./classes/Floor');
 const Road = require('./classes/Road');
+const Car = require('./classes/Car');
 
 const five = require('johnny-five');
 const board = new five.Board();
@@ -30,31 +31,37 @@ board.on("ready", () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor;
+let floor, car;
 let mousePos = {x: 0, y: 0};
 
 const init = () => {
   // camera & render
   createScene();
-  var controls = new THREE.OrbitControls( camera );
+  scene.name = 'Scene';
+
+  // const controls = new THREE.OrbitControls( camera );
   // light
   createLight();
 
   // objects
   // document.addEventListener(`mousemove`,  handleMouseMove, false);
 
-  // instantiate a loader
-
-
-
-
   floor = new Floor();
   floor.name = 'Floor';
   scene.add(floor.mesh);
-  scene.name = 'Scene';
+
+  car = new Car();
+  car.mesh.position.x = 77;
+  car.mesh.position.y = 2;
+  // car.mesh.position.z = -0.5;
+  car.mesh.position.z = 41;
+  car.mesh.rotation.y = 9.36;
+  car.name = 'Car';
+  scene.add(car.mesh);
 
   road = new Road();
   scene.add(road.mesh);
+
   loop();
 }
 
@@ -81,34 +88,21 @@ const createScene = () => {
     fieldOfView, aspectRatio, nearPlane, farPlane
   );
 
-  // pos of camera
-  // camera.position.x = 0;
-  // camera.position.y = 100;
-  // camera.position.z = 200;
-
   camera.position.y = 500;
-  camera.position.z = 200;
+  camera.position.z = 85;
   // camera.rotation.x = -90 * Math.PI / 180;
   camera.rotation.x = -80 * Math.PI / 180;
 
   // create renderer
   renderer = new THREE.WebGLRenderer({
-    // Allow transparency to show the gradient background
-    // we defined in the CSS
     alpha: true,
-
-    // Activate the anti-aliasing; this is less performant,
-    // but, as our project is low-poly based, it should be fine :)
     antialias: true
   });
 
-  // set size of renderer
   renderer.setSize(WIDTH, HEIGHT);
 
   // options are THREE.BasicShadowMap | THREE.PCFShadowMap | THREE.PCFSoftShadowMap
   renderer.shadowMap.Type = THREE.PCFShadowMap;
-
-  // shadow rendering
   renderer.shadowMap.enabled = true;
 
   container = document.querySelector('.world');
@@ -126,16 +120,12 @@ const handleWindowResize = () => {
 }
 
 const createLight = () => {
-  // A hemisphere light is a gradient colored light;
-  // the first parameter is the sky color, the second parameter is the ground color,
-  // the third parameter is the intensity of the light
   hemisphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000, .9);
   hemisphereLight.name = 'hemisphere Light';
 
   ambientLight = new THREE.AmbientLight(0xdc8874, .5);
   ambientLight.name = 'Ambient Light';
-  // A directional light shines from a specific direction.
-  // It acts like the sun, that means that all the rays produced are parallel.
+
   shadowLight = new THREE.DirectionalLight(0xffffff, .9);
   shadowLight.name = 'Shadow Light';
   // direction of light
@@ -158,7 +148,6 @@ const createLight = () => {
   // shadowLight.shadow.mapSize.width = 1024; // default is 512
   // shadowLight.shadow.mapSize.height = 1024; // default is 512
 
-
   scene.add(shadowLight);
   scene.add(hemisphereLight);
   scene.add(ambientLight);
@@ -173,7 +162,25 @@ const normalize = (v, vmin, vmax, tmin, tmax) => {
   return tv;
 }
 
+window.addEventListener(`keydown`, e => {
+  if (e.key === 'ArrowLeft') {
+
+    if (car.ride.getEffectiveTimeScale() === 0) car.ride.reset();
+    car.ride.timeScale = 1;
+    car.ride.play();
+
+  } else if (e.key === 'ArrowUp') {
+    car.mesh.children[0].rotation.y -= 0.1;
+  } else if (e.key === 'ArrowRight') {
+    car.ride.timeScale = -1;
+  } else if (e.key === 'ArrowDown') {
+    car.mesh.children[0].rotation.y += 0.1;
+  }
+}, true);
+
+
 const loop = () => {
+  car.animation(car.mesh);
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }

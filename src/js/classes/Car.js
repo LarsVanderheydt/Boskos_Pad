@@ -26,7 +26,6 @@ class Car {
       // m.geometry.center();
       // m.geometry.verticesNeedUpdate = true;
 
-
       this.mesh.add(m);
 
       //MIXER

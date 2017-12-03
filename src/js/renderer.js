@@ -24,11 +24,6 @@ process.__defineGetter__('stdin', () => {
   return process.__stdin;
 });
 
-board.on("ready", () => {
-  const myLed = new LedClass(13);
-  myLed.blinking(500);
-});
-
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
 let floor, car;
@@ -51,7 +46,7 @@ const init = () => {
   scene.add(floor.mesh);
 
   car = new Car();
-  car.mesh.position.x = 77;
+  car.mesh.position.x = 79;
   car.mesh.position.y = 2;
   // car.mesh.position.z = -0.5;
   car.mesh.position.z = 41;
@@ -163,18 +158,18 @@ const normalize = (v, vmin, vmax, tmin, tmax) => {
 }
 
 window.addEventListener(`keydown`, e => {
-  if (e.key === 'ArrowLeft') {
-
+  switch (e.key) {
+    case 'ArrowLeft':
     if (car.ride.getEffectiveTimeScale() === 0) car.ride.reset();
     car.ride.timeScale = 1;
     car.ride.play();
+      break;
 
-  } else if (e.key === 'ArrowUp') {
-    car.mesh.children[0].rotation.y -= 0.1;
-  } else if (e.key === 'ArrowRight') {
+    case 'ArrowRight':
     car.ride.timeScale = -1;
-  } else if (e.key === 'ArrowDown') {
-    car.mesh.children[0].rotation.y += 0.1;
+      break;
+    default:
+
   }
 }, true);
 

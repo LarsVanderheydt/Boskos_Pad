@@ -2,6 +2,7 @@ const Colors = require('./objects/Colors');
 
 const Floor = require('./classes/Floor');
 const Car = require('./classes/Car');
+const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
 
 const five = require('johnny-five');
@@ -31,7 +32,7 @@ board.on("ready", () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor, car;
+let floor, car, tree;
 let world;
 
 let mousePos = {x: 0, y: 0};
@@ -45,6 +46,8 @@ const init = () => {
   createLight();
 
   car = new Car();
+  tree = new Tree();
+  console.log("ik ben een boom op positie"+ tree.x);
   floor = new Floor();
   road = new Road();
 

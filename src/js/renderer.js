@@ -38,9 +38,11 @@ let mousePos = {x: 0, y: 0};
 
 const init = () => {
   exampleUtils.initialize();
+  console.log(exampleUtils.world);
+
   // camera & render
   createScene();
-  // var controls = new THREE.OrbitControls( camera );
+
   // light
   createLight();
 
@@ -48,11 +50,46 @@ const init = () => {
   floor = new Floor();
   road = new Road();
 
-  // scene.add(road.mesh);
-  scene.name = 'Scene';
+  // road.intersection_list = [car.position];
+
+  if (canGame() === true) {
+    window.addEventListener(`gamepadconnected`, connected());
+    window.addEventListener(`gamepaddisconnected`, disconnected());
+
+    const checkGP = window.setInterval(() => {
+      if (navigator.getGamepads()[0]) {
+        if(!hasGP) connected();
+      } else {
+        disconnected();
+      }
+    }, 500);
+  }
 
   loop();
 }
+
+/* GAMEPAD */
+
+const reportOnGamepad = () => {
+  const gp = navigator.getGamepads()[0];
+  // use gamepad
+  car.joystickControl(gp);
+}
+
+const canGame = () => "getGamepads" in navigator;
+
+const connected = () => {
+  hasGP = true;
+  repGP = window.setInterval(reportOnGamepad, 30);
+}
+
+const disconnected = () => {
+  hasGP = false;
+  window.clearInterval(repGP);
+}
+
+/**********************************/
+
 
 const createScene = () => {
   HEIGHT = window.innerHeight;
@@ -60,7 +97,7 @@ const createScene = () => {
 
   // create scene and fog
   scene = new THREE.Scene();
-  // scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
+  scene.name = 'Scene';
 
   // create camera
   aspectRatio = WIDTH / HEIGHT;
@@ -74,18 +111,11 @@ const createScene = () => {
   camera.position.y = 600;
   camera.position.z = 100;
   camera.position.x = 80;
-  // camera.position.z = 200;
-  // camera.rotation.x = -90 * Math.PI / 180;
   camera.rotation.x = -80 * Math.PI / 180;
 
   // create renderer
   renderer = new THREE.WebGLRenderer({
-    // Allow transparency to show the gradient background
-    // we defined in the CSS
     alpha: true,
-
-    // Activate the anti-aliasing; this is less performant,
-    // but, as our project is low-poly based, it should be fine :)
     antialias: true
   });
 
@@ -147,24 +177,19 @@ const createLight = () => {
   scene.add(ambientLight);
 }
 
-const normalize = (v, vmin, vmax, tmin, tmax) => {
-  const nv = Math.max(Math.min(v,vmax), vmin);
-  const dv = vmax-vmin;
-  const pc = (nv-vmin)/dv;
-  const dt = tmax-tmin;
-  const tv = tmin + (pc*dt);
-  return tv;
-}
-
 const loop = () => {
+  car.moveCar();
+
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 
-window.addEventListener(`keydown`, e => {
-  car.controls(e);
-}, true);
-
+window.addEventListener("keydown", function (e) {
+    car.keys[e.keyCode] = true;
+});
+window.addEventListener("keyup", function (e) {
+    car.keys[e.keyCode] = false;
+});
 
 init();

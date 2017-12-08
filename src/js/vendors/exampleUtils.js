@@ -6,38 +6,6 @@ window.exampleUtils = (function(){
 		stats;
 
 	var objects = [];
-  //
-	// var startThree = function() {
-	// 	// Setup Three.js
-	// 	renderer = new THREE.WebGLRenderer({ antialias: true });
-	// 	renderer.setSize( window.innerWidth, window.innerHeight );
-	// 	renderer.shadowMap.enabled = true;
-	// 	document.body.appendChild( renderer.domElement );
-	// 	exampleUtils.renderer = renderer;
-  //
-	// 	exampleUtils.scene = new THREE.Scene();
-  //
-	// 	camera = new THREE.PerspectiveCamera( 35, window.innerWidth / window.innerHeight, 0.01, 100 );
-	// 	camera.position.set( 0, 15, 30 );
-	// 	camera.lookAt( exampleUtils.scene.position );
-  //
-	// 	//controls = new THREE.TrackballControls( camera, renderer.domElement );
-  //
-	// 	var ambient_light = new THREE.AmbientLight( new THREE.Color( 0x333333 ) );
-	// 	exampleUtils.scene.add( ambient_light );
-  //
-	// 	var directional_light = new THREE.DirectionalLight( new THREE.Color( 0xFFFFFF ) );
-	// 	directional_light.position.set( 10, 30, 20 );
-	// 	//directional_light.shadowMapWidth = directional_light.shadowMapHeight = 2048;
-	// 	directional_light.shadow.camera.left = directional_light.shadow.camera.bottom = -50;
-	// 	directional_light.shadow.camera.right = directional_light.shadow.camera.left = 50;
-	// 	directional_light.castShadow = true;
-	// 	directional_light.shadow.camera.near = 1;
-	// 	directional_light.shadow.camera.far = 50;
-	// 	directional_light.shadow.camera.fov = 50;
-	// 	// directional_light.shadowDarkness = 0.5;
-	// 	exampleUtils.scene.add( directional_light );
-	// };
 
 	var startGoblin = function() {
 		exampleUtils.world = world = new Goblin.World( new Goblin.SAPBroadphase(), new Goblin.NarrowPhase(), new Goblin.IterativeSolver() );
@@ -172,7 +140,7 @@ window.exampleUtils = (function(){
         },
 
 		run: function() {
-			requestAnimationFrame( exampleUtils.run );
+			// requestAnimationFrame( exampleUtils.run );
 
 			//controls.update();
 			// stats.begin();

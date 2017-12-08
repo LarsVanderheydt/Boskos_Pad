@@ -57,7 +57,7 @@ class Car {
 
     if (gp.axes[0] <= -0.1) {
       if (this.velX < this.speed) {
-        this.velX --;
+        //this.velX --;
       }
     }
 

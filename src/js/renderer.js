@@ -25,11 +25,6 @@ process.__defineGetter__('stdin', () => {
   return process.__stdin;
 });
 
-board.on("ready", () => {
-  const myLed = new LedClass(13);
-  myLed.blinking(500);
-});
-
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
 let floor, car, tree;
@@ -49,7 +44,9 @@ const init = () => {
 
   car = new Car();
   tree = new Tree();
-  console.log("ik ben een boom op positie"+ tree.x);
+
+  console.log("ik ben een boom op positie " + tree.mesh.position.x + " " + tree.mesh.position.y + " " + tree.mesh.position.z);
+  
   floor = new Floor();
   road = new Road();
 

@@ -1,3 +1,12 @@
+/*
+
+JOYSTICK:
+
+VRx: A0
+VRy: A1
+
+*/
+
 const Colors = require('../objects/Colors');
 let m;
 
@@ -112,34 +121,19 @@ class Car {
 
 
 
-    const mapToDegrees = this.map(this.angle, 1, -1, 30, -30);
+    const mapToDegrees = this.map(this.angle, 1, -1, 42, -42);
 
     const radians = mapToDegrees * (Math.PI/180);
     this.m.goblin.rotation.y = radians;
 
     const deg = this.map(this.angle, 1, -1, 90, -90);
 
-    this.m.goblin.position.z += this.speed * Math.sin(-this.angle);
-    this.m.goblin.position.x += this.speed * Math.cos(-this.angle);
 
-    // if (direction.up) {
-    //
-    // } else if (direction.down) {
-    //   this.m.goblin.position.z += this.speed * Math.sin(Math.abs(this.angle));
-    //   this.m.goblin.position.x += this.speed * Math.cos(Math.abs(this.angle));
-    // }
+    if (direction.right === true) {
+      this.m.goblin.position.z += this.speed * Math.sin(-this.angle);
+      this.m.goblin.position.x += this.speed * Math.cos(-this.angle);
+    }
   }
-
-
-
-
-
-
-
-
-
-
-
 
   moveCar() {
     if (this.keys[38]) {

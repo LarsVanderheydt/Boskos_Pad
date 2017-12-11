@@ -4,6 +4,7 @@ const Floor = require('./classes/Floor');
 const Car = require('./classes/Car');
 const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
+const Plane = require('./classes/Plane');
 
 const five = require('johnny-five');
 const board = new five.Board();
@@ -27,7 +28,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor, car, tree;
+let floor, car, tree, plane;
 let world;
 
 let joystick;
@@ -55,6 +56,17 @@ const init = () => {
   new Tree(2, 24);
   new Tree(-3, 18);
 
+  plane = new Plane();
+  plane.mesh.position.x = -20;
+  plane.mesh.position.z = -90;
+
+  scene.add(plane.mesh);
+
+  const startPlaneAfter = 20000;
+  setInterval(() => {
+    plane.pause = false;
+  }, startPlaneAfter);
+
   board.on("ready", () => {
     joystick = new five.Joystick({
       pins: ["A0", "A1"]
@@ -65,8 +77,6 @@ const init = () => {
 
   floor = new Floor();
   road = new Road();
-
-  // road.intersection_list = [car.position];
 
   if (canGame() === true) {
     window.addEventListener(`gamepadconnected`, connected());
@@ -195,12 +205,12 @@ const createLight = () => {
 
 const loop = () => {
   car.moveCar();
-
   if (joystick) {
     car.joystick(joystick);
     //console.log(joystick.x);
   }
 
+  plane.fly();
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);

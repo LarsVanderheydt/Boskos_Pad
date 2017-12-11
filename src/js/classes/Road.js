@@ -14,8 +14,6 @@ class Road {
       m.name = 'Road';
       m.position.y = -1.3;
 
-
-
       scene.add(m);
     });
 

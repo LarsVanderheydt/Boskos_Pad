@@ -3,7 +3,7 @@ let t;
 const tree = {};
 
 class Tree {
-  constructor() {
+  constructor(x, y) {
     	const sides=8;
     	const tiers=6;
     	const scalarMultiplier=(Math.random()*(0.25-0.1))+0.05;
@@ -32,8 +32,8 @@ class Tree {
     	this.mesh.add(treeTrunk);
     	this.mesh.add(treeTop);
       this.mesh.scale.set(10,10,10);
-      this.mesh.position.x = 10;
-      this.mesh.position.z = 10
+      this.mesh.position.x = x;
+      this.mesh.position.z = y
       this.mesh.position.y = 0;
       //this.t.name = 'Tree'
       scene.add(this.mesh);

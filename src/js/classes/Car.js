@@ -64,9 +64,81 @@ class Car {
     if (gp.axes[1] || gp.axes[1]) {
       this.angle = -gp.axes[1];
     }
-
     // this.move();
   }
+
+  joystick(js) {
+    const direction = {
+      left: false,
+      right: false,
+      up: false,
+      down: false
+    }
+
+    // console.log(js);
+    if (js.x >= 0.1) {
+      // if (this.velY > -this.speed) {
+      //   this.velY --;
+      // }
+      direction.up = true;
+    }
+    //
+    if (js.x <= -0.1) {
+    //   if (this.velY < this.speed) {
+    //     this.velY ++;
+    //   }
+      direction.down = true;
+    }
+    //
+    if (js.y >= 0.1) {
+    //   if (this.velX > -this.speed) {
+    //     this.velX ++;
+    //   }
+      direction.right = true;
+    }
+    //
+    if (js.y <= -0.1) {
+    //   if (this.velX < this.speed) {
+    //     //this.velX --;
+    //   }
+      direction.left = true;
+    }
+    //
+    if (js.y >= 0.2 || js.x >= 0.2) {
+      this.angle = js.x;
+    }
+    //
+    // this.move();
+
+
+
+    const mapToDegrees = this.map(this.angle, 1, -1, 30, -30);
+
+    const radians = mapToDegrees * (Math.PI/180);
+    this.m.goblin.rotation.y = radians;
+
+    const deg = this.map(this.angle, 1, -1, 90, -90);
+
+    this.m.goblin.position.z += this.speed * Math.sin(-this.angle);
+    this.m.goblin.position.x += this.speed * Math.cos(-this.angle);
+
+    // if (direction.up) {
+    //
+    // } else if (direction.down) {
+    //   this.m.goblin.position.z += this.speed * Math.sin(Math.abs(this.angle));
+    //   this.m.goblin.position.x += this.speed * Math.cos(Math.abs(this.angle));
+    // }
+  }
+
+
+
+
+
+
+
+
+
+
 
 
   moveCar() {
@@ -94,7 +166,7 @@ class Car {
       }
     }
 
-    this.move();
+    // this.move();
   }
 
   move() {
@@ -102,7 +174,6 @@ class Car {
     this.m.goblin.position.z += this.velY;
     this.velX *= this.friction;
     this.m.goblin.position.x += this.velX;
-
 
     const mapToDegrees = this.map(this.angle, 1, -1, 30, -30);
 

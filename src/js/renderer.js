@@ -30,6 +30,8 @@ let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH,
 let floor, car, tree;
 let world;
 
+let joystick;
+
 let mousePos = {x: 0, y: 0};
 
 const init = () => {
@@ -43,10 +45,24 @@ const init = () => {
   createLight();
 
   car = new Car();
-  tree = new Tree();
+  tree = new Tree(10, 10);
+  new Tree(15, 17);
+  new Tree(6, 17);
+  new Tree(3, 8);
+  new Tree(-2, 12);
+  new Tree(10, 24);
+  new Tree(19, 23);
+  new Tree(2, 24);
+  new Tree(-3, 18);
+
+  board.on("ready", () => {
+    joystick = new five.Joystick({
+      pins: ["A0", "A1"]
+    });
+  });
 
   console.log("ik ben een boom op positie " + tree.mesh.position.x + " " + tree.mesh.position.y + " " + tree.mesh.position.z);
-  
+
   floor = new Floor();
   road = new Road();
 
@@ -179,6 +195,11 @@ const createLight = () => {
 
 const loop = () => {
   car.moveCar();
+
+  if (joystick) {
+    car.joystick(joystick);
+    //console.log(joystick.x);
+  }
 
   exampleUtils.run();
   renderer.render(scene, camera);

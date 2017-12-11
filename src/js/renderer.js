@@ -1,6 +1,8 @@
 const Colors = require('./objects/Colors');
 
 const Floor = require('./classes/Floor');
+const Car = require('./classes/Car');
+const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
 
 const five = require('johnny-five');
@@ -23,86 +25,71 @@ process.__defineGetter__('stdin', () => {
   return process.__stdin;
 });
 
-board.on("ready", () => {
-  const myLed = new LedClass(13);
-  myLed.blinking(500);
-});
-
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor;
+let floor, car, tree;
+let world;
+
 let mousePos = {x: 0, y: 0};
 
 const init = () => {
+  exampleUtils.initialize();
+  console.log(exampleUtils.world);
+
   // camera & render
   createScene();
 
   // light
   createLight();
 
-  // objects
-  // document.addEventListener(`mousemove`,  handleMouseMove, false);
+  car = new Car();
+  tree = new Tree();
 
-  // instantiate a loader
-  const loader = new THREE.OBJLoader();
-
-  // load a resource
-  loader.load(
-    // resource URL
-    './js/models/svg_track.obj',
-    // called when resource is loaded
-    object => {
-      // object.name = 'Object';
-      // object.position.set(2.4, 1.54, -3.4);
-      object.position.y = 1.1;
-
-      object.children[1].material.color.setHex(0xFFC183);
-      // object.children[0].visible = false;
-
-      // object.children.forEach(obj => {
-      //   obj.castShadow = true;
-      //   obj.receiveShadow = true;
-      // });
-
-      object.rotation.y = 1.58;
-
-      object.castShadow = true;
-      object.receiveShadow = true;
-
-      object.scale.x = 1.34;
-      object.scale.y = 1.34;
-      object.scale.z = 1.34;
-
-      scene.add(object);
-     },
-     // called when loading is in progresses
-     xhr => {
-       console.error( ( xhr.loaded / xhr.total * 100 ) + '% loaded' );
-     },
-
-     // called when loading has errors
-     error => {
-       console.log( 'An error happened' );
-     }
-  );
-
-
-
+  console.log("ik ben een boom op positie " + tree.mesh.position.x + " " + tree.mesh.position.y + " " + tree.mesh.position.z);
+  
   floor = new Floor();
-  floor.name = 'Floor';
-  scene.add(floor.mesh);
-  scene.name = 'Scene';
+  road = new Road();
 
-  // road = new Road();
-  // scene.add(road.mesh);
+  // road.intersection_list = [car.position];
+
+  if (canGame() === true) {
+    window.addEventListener(`gamepadconnected`, connected());
+    window.addEventListener(`gamepaddisconnected`, disconnected());
+
+    const checkGP = window.setInterval(() => {
+      if (navigator.getGamepads()[0]) {
+        if(!hasGP) connected();
+      } else {
+        disconnected();
+      }
+    }, 500);
+  }
+
   loop();
 }
 
-// const handleMouseMove = e => {
-//   const tx = -1 + (e.clientX / WIDTH) *2;
-//   const ty = 1 - (e.clientY / HEIGHT) *2;
-//   mousePos = {x: tx, y: ty};
-// }
+/* GAMEPAD */
+
+const reportOnGamepad = () => {
+  const gp = navigator.getGamepads()[0];
+  // use gamepad
+  car.joystickControl(gp);
+}
+
+const canGame = () => "getGamepads" in navigator;
+
+const connected = () => {
+  hasGP = true;
+  repGP = window.setInterval(reportOnGamepad, 30);
+}
+
+const disconnected = () => {
+  hasGP = false;
+  window.clearInterval(repGP);
+}
+
+/**********************************/
+
 
 const createScene = () => {
   HEIGHT = window.innerHeight;
@@ -110,7 +97,7 @@ const createScene = () => {
 
   // create scene and fog
   scene = new THREE.Scene();
-  //scene.fog = new THREE.Fog(0xf7d9aa, 100, 950);
+  scene.name = 'Scene';
 
   // create camera
   aspectRatio = WIDTH / HEIGHT;
@@ -121,24 +108,14 @@ const createScene = () => {
     fieldOfView, aspectRatio, nearPlane, farPlane
   );
 
-  // pos of camera
-  // camera.position.x = 0;
-  // camera.position.y = 100;
-  // camera.position.z = 200;
-
-  camera.position.y = 79;
-  camera.position.z = 14;
-  // camera.rotation.x = -90 * Math.PI / 180;
+  camera.position.y = 600;
+  camera.position.z = 100;
+  camera.position.x = 80;
   camera.rotation.x = -80 * Math.PI / 180;
 
   // create renderer
   renderer = new THREE.WebGLRenderer({
-    // Allow transparency to show the gradient background
-    // we defined in the CSS
     alpha: true,
-
-    // Activate the anti-aliasing; this is less performant,
-    // but, as our project is low-poly based, it should be fine :)
     antialias: true
   });
 
@@ -146,7 +123,7 @@ const createScene = () => {
   renderer.setSize(WIDTH, HEIGHT);
 
   // options are THREE.BasicShadowMap | THREE.PCFShadowMap | THREE.PCFSoftShadowMap
-  renderer.shadowMapType = THREE.PCFSoftShadowMap;
+  renderer.shadowMap.Type = THREE.PCFShadowMap;
 
   // shadow rendering
   renderer.shadowMap.enabled = true;
@@ -179,7 +156,7 @@ const createLight = () => {
   shadowLight = new THREE.DirectionalLight(0xffffff, .9);
   shadowLight.name = 'Shadow Light';
   // direction of light
-  shadowLight.position.set(5.5, 7.6, 7);
+  shadowLight.position.set(150, 350, 350);
 
   // allow shadow casting
   shadowLight.castShadow = true;
@@ -195,27 +172,24 @@ const createLight = () => {
   shadowLight.shadow.mapSize.width = 2048;
   shadowLight.shadow.mapSize.height = 2048;
 
-  shadowLight.shadow.mapSize.width = 1024; // default is 512
-  shadowLight.shadow.mapSize.height = 1024; // default is 512
-
-
   scene.add(shadowLight);
   scene.add(hemisphereLight);
   scene.add(ambientLight);
 }
 
-const normalize = (v, vmin, vmax, tmin, tmax) => {
-  const nv = Math.max(Math.min(v,vmax), vmin);
-  const dv = vmax-vmin;
-  const pc = (nv-vmin)/dv;
-  const dt = tmax-tmin;
-  const tv = tmin + (pc*dt);
-  return tv;
-}
-
 const loop = () => {
+  car.moveCar();
+
+  exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
+
+window.addEventListener("keydown", function (e) {
+    car.keys[e.keyCode] = true;
+});
+window.addEventListener("keyup", function (e) {
+    car.keys[e.keyCode] = false;
+});
 
 init();

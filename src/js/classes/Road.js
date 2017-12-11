@@ -1,67 +1,64 @@
 const Colors = require('../objects/Colors');
+const loader = new THREE.OBJLoader();
+const JSONloader = new THREE.JSONLoader();
+
 class Road {
   constructor() {
     this.mesh = new THREE.Object3D();
-    this.mesh.name = 'Road';
 
-    this.firstStraight();
-    this.firstDown();
-    this.firstUp();
+    JSONloader.load("./js/models/road/ground.json", geometry => {
+      const mat = new THREE.MeshPhongMaterial({
+        color: Colors.white
+      });
+      const m = new THREE.Mesh(geometry, mat);
+      m.name = 'Road';
+      m.position.y = -1.3;
 
-    this.mesh.position.x = -8.5;
-    this.mesh.castShadow = true;
-    this.mesh.receiveShadow = true;
+
+
+      scene.add(m);
+    });
+
+    this.loadRoad("top");
+    this.loadRoad("bottom");
+    this.loadRoad("left");
+    this.loadRoad("right");
+    this.loadRoad("middle");
+
+    scene.add(this.mesh);
   }
 
-  firstStraight() {
-    const geom = new THREE.BoxGeometry(6, 4, 1, 2);
-    // geom.applyMatrix(new THREE.Matrix4().translate(0, 0, 0));
-    geom.mergeVertices();
-    const l = geom.vertices.length;
-    // geom.vertices[0].x = 0.5;
+  loadRoad(url) {
+    JSONloader.load(`./js/models/road/${url}.json`, geometry => {
+      const mat = new THREE.MeshPhongMaterial({
+        color: Colors.blue
+      });
 
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.blue
+      const mesh = new THREE.Mesh(geometry, mat);
+      mesh.name = 'mesh';
+
+      mesh.castShadow = mesh.receiveShadow = true;
+      scene.add(mesh);
+      const shape = new Goblin.MeshShape(
+        mesh.geometry.vertices.map(vertex =>{
+          return new Goblin.Vector3( vertex.x, vertex.y, vertex.z );
+        }),
+        mesh.geometry.faces.reduce(
+          (faces, face) => {
+            faces.push( face.a, face.b, face.c );
+            return faces;
+          },[]
+        )
+      );
+
+      mesh.goblin = new Goblin.RigidBody(shape, 0);
+      // mesh.goblin.position.y = 1;
+      mesh.goblin.position.y = -1.3;
+
+      exampleUtils.objects.push(mesh);
+      exampleUtils.world.addRigidBody(mesh.goblin);
+      scene.add(mesh);
     });
-    const m = new THREE.Mesh(geom, mat);
-    m.name = 'First Straight';
-    this.mesh.add(m);
-  }
-
-  firstDown() {
-    const geom = new THREE.BoxGeometry(6, 4, 1, 2);
-    geom.mergeVertices();
-    const l = geom.vertices.length;
-
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.blue
-    });
-    const m = new THREE.Mesh(geom, mat);
-    m.name = 'First Down';
-
-    m.position.x = 4.4;
-    m.position.z = 2.1;
-
-    m.rotation.y = -45 * Math.PI / 180;
-    this.mesh.add(m);
-  }
-
-  firstUp() {
-    const geom = new THREE.BoxGeometry(6, 4, 1, 2);
-    geom.mergeVertices();
-    const l = geom.vertices.length;
-
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.blue
-    });
-    const m = new THREE.Mesh(geom, mat);
-    m.name = 'First Up';
-
-    m.position.x = 4.4;
-    m.position.z = -2.1;
-
-    m.rotation.y = 45 * Math.PI / 180;
-    this.mesh.add(m);
   }
 }
 

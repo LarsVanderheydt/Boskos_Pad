@@ -1,10 +1,14 @@
 const Colors = require('./objects/Colors');
-
 const Floor = require('./classes/Floor');
 const Car = require('./classes/Car');
 const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
+const Blimp = require('./classes/Blimp');
 const Plane = require('./classes/Plane');
+const Kayak = require('./classes/Kayak');
+
+// get aal coordinates from all dubplicate objects like trees, ...
+const coords = require('../assets/coords.json');
 
 const five = require('johnny-five');
 const board = new five.Board();
@@ -37,7 +41,6 @@ let mousePos = {x: 0, y: 0};
 
 const init = () => {
   exampleUtils.initialize();
-  console.log(exampleUtils.world);
 
   // camera & render
   createScene();
@@ -46,15 +49,18 @@ const init = () => {
   createLight();
 
   car = new Car();
-  tree = new Tree(10, 10);
-  new Tree(15, 17);
-  new Tree(6, 17);
-  new Tree(3, 8);
-  new Tree(-2, 12);
-  new Tree(10, 24);
-  new Tree(19, 23);
-  new Tree(2, 24);
-  new Tree(-3, 18);
+
+  coords.treesBottomLeft.forEach(trees => {
+    tree = new Tree(trees.x, trees.y);
+  });
+
+  blimp = new Blimp();
+  blimp.mesh.position.x = 160;
+  blimp.mesh.position.z = 150;
+  scene.add(blimp.mesh);
+
+  kayak = new Kayak();
+  scene.add(kayak.mesh);
 
   plane = new Plane();
   plane.mesh.position.x = -20;
@@ -62,7 +68,8 @@ const init = () => {
 
   scene.add(plane.mesh);
 
-  const startPlaneAfter = 20000;
+  // start plane again after 3 min (when stopped)
+  const startPlaneAfter = 60000 * 4;
   setInterval(() => {
     plane.pause = false;
   }, startPlaneAfter);
@@ -182,7 +189,7 @@ const createLight = () => {
   shadowLight = new THREE.DirectionalLight(0xffffff, .9);
   shadowLight.name = 'Shadow Light';
   // direction of light
-  shadowLight.position.set(150, 350, 350);
+  shadowLight.position.set(120, 400, 280);
 
   // allow shadow casting
   shadowLight.castShadow = true;
@@ -210,7 +217,12 @@ const loop = () => {
     //console.log(joystick.x);
   }
 
+
+  setTimeout(() => {
+    blimp.fly();
+  }, 60000);
   plane.fly();
+
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);

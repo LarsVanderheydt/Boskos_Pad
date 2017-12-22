@@ -11,6 +11,7 @@ class Road {
         color: Colors.white
       });
       const m = new THREE.Mesh(geometry, mat);
+      m.castShadow = m.receiveShadow = true;
       m.name = 'Road';
       m.position.y = -1.3;
 
@@ -52,6 +53,8 @@ class Road {
       mesh.goblin = new Goblin.RigidBody(shape, 0);
       // mesh.goblin.position.y = 1;
       mesh.goblin.position.y = -1.3;
+      mesh.visible = false;
+      console.log(mesh.material);
 
       exampleUtils.objects.push(mesh);
       exampleUtils.world.addRigidBody(mesh.goblin);

@@ -1,10 +1,12 @@
 const Colors = require('./objects/Colors');
 
 const Floor = require('./classes/Floor');
+const Water = require('./classes/Water');
 const Car = require('./classes/Car');
 const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
 const Plane = require('./classes/Plane');
+const Kayak = require('./classes/Kayak');
 
 const five = require('johnny-five');
 const board = new five.Board();
@@ -28,7 +30,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor, car, tree, plane;
+let floor, water, car, tree, plane, kayak;
 let world;
 
 let joystick;
@@ -46,6 +48,7 @@ const init = () => {
   createLight();
 
   car = new Car();
+
   tree = new Tree(10, 10);
   new Tree(15, 17);
   new Tree(6, 17);
@@ -55,6 +58,42 @@ const init = () => {
   new Tree(19, 23);
   new Tree(2, 24);
   new Tree(-3, 18);
+
+  new Tree(100, -47);
+  new Tree(80, -40);
+  new Tree(95, -41);
+  new Tree(88, -40);
+  new Tree(78, -47);
+  new Tree(86, -48);
+  new Tree(94, -50);
+
+  new Tree(104, 80);
+  new Tree(135, 80);
+
+  new Tree(104, 60);
+  new Tree(135, 60);
+
+  new Tree(104, 40);
+  new Tree(135, 40);
+
+  // new Tree(104, 20);
+  // new Tree(135, 20);
+
+  new Tree(104, 0);
+  new Tree(135, 0);
+
+  // new Tree(104, -20);
+  // new Tree(135, -20);
+
+  new Tree(104, -40);
+  new Tree(135, -40);
+
+  new Tree(104, -60);
+  new Tree(135, -60);
+
+  new Tree(104, -80);
+  new Tree(135, -80);
+
 
   plane = new Plane();
   plane.mesh.position.x = -20;
@@ -67,6 +106,13 @@ const init = () => {
     plane.pause = false;
   }, startPlaneAfter);
 
+  kayak = new Kayak();
+  kayak.mesh.position.x = 120;
+  kayak.mesh.position.y = -40;
+  kayak.mesh.position.z = -10;
+
+  scene.add(kayak.mesh);
+
   board.on("ready", () => {
     joystick = new five.Joystick({
       pins: ["A0", "A1"]
@@ -76,6 +122,7 @@ const init = () => {
   console.log("ik ben een boom op positie " + tree.mesh.position.x + " " + tree.mesh.position.y + " " + tree.mesh.position.z);
 
   floor = new Floor();
+  water = new Water();
   road = new Road();
 
   if (canGame() === true) {
@@ -207,9 +254,9 @@ const loop = () => {
   car.moveCar();
   if (joystick) {
     car.joystick(joystick);
-    //console.log(joystick.x);
+    console.log(joystick.x);
   }
-
+  kayak.wiggle();
   plane.fly();
   exampleUtils.run();
   renderer.render(scene, camera);

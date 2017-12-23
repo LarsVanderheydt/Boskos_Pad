@@ -31,7 +31,7 @@ class Tree {
       this.mesh = new THREE.Object3D();
     	this.mesh.add(treeTrunk);
     	this.mesh.add(treeTop);
-      this.mesh.scale.set(10,10,10);
+      this.mesh.scale.set(8,8,8);
       this.mesh.position.x = x;
       this.mesh.position.z = y
       this.mesh.position.y = 0;

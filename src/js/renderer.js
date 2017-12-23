@@ -52,9 +52,14 @@ const init = () => {
 
   car = new Car();
 
-  coords.treesBottomLeft.forEach(trees => {
-    tree = new Tree(trees.x, trees.y);
+  const trees = new THREE.Object3D();
+  trees.name = "trees group";
+  coords.trees.forEach(tree => {
+    tree = new Tree(tree.x, tree.y);
+    tree.mesh.name = 'tree';
+    trees.add(tree.mesh);
   });
+  scene.add(trees);
 
   blimp = new Blimp();
   blimp.mesh.position.x = 160;
@@ -64,40 +69,40 @@ const init = () => {
   // kayak = new Kayak();
   // scene.add(kayak.mesh);
 
-  new Tree(100, -47);
-  new Tree(80, -40);
-  new Tree(95, -41);
-  new Tree(88, -40);
-  new Tree(78, -47);
-  new Tree(86, -48);
-  new Tree(94, -50);
-
-  new Tree(104, 80);
-  new Tree(135, 80);
-
-  new Tree(104, 60);
-  new Tree(135, 60);
-
-  new Tree(104, 40);
-  new Tree(135, 40);
-
-  // new Tree(104, 20);
-  // new Tree(135, 20);
-
-  new Tree(104, 0);
-  new Tree(135, 0);
-
-  // new Tree(104, -20);
-  // new Tree(135, -20);
-
-  new Tree(104, -40);
-  new Tree(135, -40);
-
-  new Tree(104, -60);
-  new Tree(135, -60);
-
-  new Tree(104, -80);
-  new Tree(135, -80);
+  // new Tree(100, -47);
+  // new Tree(80, -40);
+  // new Tree(95, -41);
+  // new Tree(88, -40);
+  // new Tree(78, -47);
+  // new Tree(86, -48);
+  // new Tree(94, -50);
+  //
+  // new Tree(104, 80);
+  // new Tree(135, 80);
+  //
+  // new Tree(104, 60);
+  // new Tree(135, 60);
+  //
+  // new Tree(104, 40);
+  // new Tree(135, 40);
+  //
+  // // new Tree(104, 20);
+  // // new Tree(135, 20);
+  //
+  // new Tree(104, 0);
+  // new Tree(135, 0);
+  //
+  // // new Tree(104, -20);
+  // // new Tree(135, -20);
+  //
+  // new Tree(104, -40);
+  // new Tree(135, -40);
+  //
+  // new Tree(104, -60);
+  // new Tree(135, -60);
+  //
+  // new Tree(104, -80);
+  // new Tree(135, -80);
 
 
   plane = new Plane();
@@ -114,7 +119,7 @@ const init = () => {
 
   kayak = new Kayak();
   kayak.mesh.position.x = 120;
-  kayak.mesh.position.y = -40;
+  kayak.mesh.position.y = -39;
   kayak.mesh.position.z = -10;
 
   scene.add(kayak.mesh);
@@ -160,14 +165,9 @@ const init = () => {
     });
   });
 
-  console.log("ik ben een boom op positie " + tree.mesh.position.x + " " + tree.mesh.position.y + " " + tree.mesh.position.z);
-
   floor = new Floor();
   water = new Water();
-  road = new Road();
-  road.mesh.position.x = -7.5;
-  road.mesh.position.z = -35.6;
-  scene.add(road.mesh);
+  road = new Road(-7.5, -35.6);
 
   if (canGame() === true) {
     window.addEventListener(`gamepadconnected`, connected());
@@ -295,7 +295,7 @@ const createLight = () => {
 }
 
 const loop = () => {
-  // car.arrowControl();
+  car.arrowControl();
   // if (analogJoystick) {
   //   car.joystick(analogJoystick);
   // }

@@ -1,4 +1,4 @@
-const scale = 2.5;
+const scale = 2;
 let angle = 0;
 let wiggleSpeed = 0.01;
 

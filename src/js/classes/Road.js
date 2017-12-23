@@ -3,7 +3,9 @@ const loader = new THREE.OBJLoader();
 const JSONloader = new THREE.JSONLoader();
 
 class Road {
-  constructor() {
+  constructor(x, z) {
+    this.x = x;
+    this.z = z;
     this.mesh = new THREE.Object3D();
     JSONloader.load("./js/models/road.json", geometry => {
       const mat = new THREE.MeshPhongMaterial({
@@ -13,15 +15,13 @@ class Road {
       m.castShadow = m.receiveShadow = true;
       m.name = 'Road';
       m.position.y = 0.5;
-      this.mesh.add(m);
+      m.position.x = this.x;
+      m.position.z = this.z;
+      scene.add(m);
     });
 
-    // this.loadRoad("top");
-    // this.loadRoad("bottom");
-    // this.loadRoad("left");
-    // this.loadRoad("right");
-    // this.loadRoad("middle");
     this.loadRoad('borders');
+    scene.add(this.mesh);
   }
 
   loadRoad(url) {
@@ -46,13 +46,14 @@ class Road {
       );
 
       mesh.goblin = new Goblin.RigidBody(shape, 0);
-      // mesh.goblin.position.y = 1;
       mesh.goblin.position.y = 0.5;
-      // mesh.visible = false;
+      mesh.goblin.position.x = this.x;
+      mesh.goblin.position.z = this.z;
+      mesh.visible = false;
 
       exampleUtils.objects.push(mesh);
       exampleUtils.world.addRigidBody(mesh.goblin);
-      this.mesh.add(mesh);
+      scene.add(mesh);
     });
   }
 }

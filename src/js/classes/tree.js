@@ -36,7 +36,7 @@ class Tree {
       this.mesh.position.z = y
       this.mesh.position.y = 0;
       //this.t.name = 'Tree'
-      scene.add(this.mesh);
+      //scene.add(this.mesh);
   }
 }
 

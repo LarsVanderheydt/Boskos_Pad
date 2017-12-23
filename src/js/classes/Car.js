@@ -16,7 +16,7 @@ class Car {
     this.y = 0;
     this.velY = 0;
     this.velX = 0;
-    this.speed = 0.1;
+    this.speed = 0.01;
     this.friction = 0.1;
     this.keys = [];
     this.angle = 0;
@@ -75,7 +75,7 @@ class Car {
     if (gp.axes[1] || gp.axes[1]) {
       this.angle = -gp.axes[1];
     }
-    //this.move();
+    this.move();
   }
 
   joystick(js) {
@@ -126,43 +126,46 @@ class Car {
     if (this.keys[38]) {
       if (this.velY > -this.speed) {
         this.velY --;
+        this.angle = 0.45;
       }
     }
 
     if (this.keys[40]) {
       if (this.velY < this.speed) {
         this.velY ++;
+        this.angle = -0.45;
       }
     }
 
     if (this.keys[39]) {
       if (this.velX > -this.speed) {
         this.velX ++;
+        this.angle = 0;
       }
     }
 
     if (this.keys[37]) {
       if (this.velX < this.speed) {
         this.velX --;
+        this.angle = 0;
       }
     }
 
-    // this.move();
+    this.move();
   }
 
   miniJoystickControl(dir) {
     this.velX = 0;
     this.velY = 0;
-    const speed = 0.05;
+    // const speed = 0.05;
 
     if (dir.right === true && dir.up === false && dir.down === false) {
-      this.velX = speed;
+      this.velX = this.speed;
       this.angle = 0;
     }
 
     if (dir.up === true && dir.right === false && dir.left === false) {
-      this.velY = -speed;
-      this.angle = 0.5;
+      this.velY = -this.speed;
     }
 
     this.move();
@@ -171,12 +174,12 @@ class Car {
   }
 
   move() {
-    // this.velY *= this.friction;
+    this.velY *= this.friction;
     this.m.goblin.position.z += this.velY;
-    // this.velX *= this.friction;
+    this.velX *= this.friction;
     this.m.goblin.position.x += this.velX;
 
-    const mapToDegrees = this.map(this.angle, 1, -1, 30, -30);
+    const mapToDegrees = this.map(this.angle, 1, -1, 90, -90);
 
     const radians = mapToDegrees * (Math.PI/180);
     this.m.goblin.rotation.y = radians;

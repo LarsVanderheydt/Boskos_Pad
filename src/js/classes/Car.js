@@ -16,7 +16,7 @@ class Car {
     this.y = 0;
     this.velY = 0;
     this.velX = 0;
-    this.speed = 0.05;
+    this.speed = 0.1;
     this.friction = 0.1;
     this.keys = [];
     this.angle = 0;
@@ -40,7 +40,7 @@ class Car {
     this.m.goblin.linear_velocity.y = -2;
     // this.m.goblin.setGravity(0, -10, 0);
     // this.m.goblin.restitution = 0.3;
-
+    
     this.m.name = 'Car';
     scene.add(this.m);
   }

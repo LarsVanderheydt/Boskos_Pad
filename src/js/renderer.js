@@ -35,7 +35,8 @@ let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH,
 let floor, car, tree, plane;
 let world;
 
-let joystick;
+let analogJoystick;
+let joystick = {};
 
 let mousePos = {x: 0, y: 0};
 
@@ -75,8 +76,43 @@ const init = () => {
   }, startPlaneAfter);
 
   board.on("ready", () => {
-    joystick = new five.Joystick({
+    analogJoystick = new five.Joystick({
       pins: ["A0", "A1"]
+    });
+
+    const dir = {
+      left: false,
+      right: false,
+      up: false,
+      down: false
+    }
+
+    joystick.right = new five.Button(8);
+
+    joystick.right.on("press", () => {
+      dir.right = true;
+      car.joystickPause = false;
+      car.miniJoystickControl(dir);
+    });
+
+    joystick.right.on("release", () => {
+      dir.right = false;
+      car.joystickPause = true;
+      car.miniJoystickControl(dir);
+    });
+
+    joystick.up = new five.Button(9);
+
+    joystick.up.on("press", () => {
+      dir.up = true;
+      car.joystickPause = false;
+      car.miniJoystickControl(dir);
+    });
+
+    joystick.up.on("release", () => {
+      dir.up = false;
+      car.joystickPause = true;
+      car.miniJoystickControl(dir);
     });
   });
 
@@ -84,6 +120,9 @@ const init = () => {
 
   floor = new Floor();
   road = new Road();
+  road.mesh.position.x = -7.5;
+  road.mesh.position.z = -35.6;
+  scene.add(road.mesh);
 
   if (canGame() === true) {
     window.addEventListener(`gamepadconnected`, connected());
@@ -106,7 +145,7 @@ const init = () => {
 const reportOnGamepad = () => {
   const gp = navigator.getGamepads()[0];
   // use gamepad
-  car.joystickControl(gp);
+  car.xboxControl(gp);
 }
 
 const canGame = () => "getGamepads" in navigator;
@@ -211,11 +250,10 @@ const createLight = () => {
 }
 
 const loop = () => {
-  car.moveCar();
-  if (joystick) {
-    car.joystick(joystick);
-    //console.log(joystick.x);
-  }
+  // car.arrowControl();
+  // if (analogJoystick) {
+  //   car.joystick(analogJoystick);
+  // }
 
 
   setTimeout(() => {

@@ -20,6 +20,7 @@ class Car {
     this.friction = 0.1;
     this.keys = [];
     this.angle = 0;
+    this.joystickPause = false;
 
     this.left = false;
     this.right = false;
@@ -40,12 +41,13 @@ class Car {
     this.m.goblin.linear_velocity.y = -2;
     // this.m.goblin.setGravity(0, -10, 0);
     // this.m.goblin.restitution = 0.3;
-    
+
     this.m.name = 'Car';
     scene.add(this.m);
   }
 
-  joystickControl(gp) {
+
+  xboxControl(gp) {
     if (gp.axes[1] <= -0.1) {
       if (this.velY > -this.speed) {
         this.velY --;
@@ -73,7 +75,7 @@ class Car {
     if (gp.axes[1] || gp.axes[1]) {
       this.angle = -gp.axes[1];
     }
-    // this.move();
+    //this.move();
   }
 
   joystick(js) {
@@ -84,42 +86,27 @@ class Car {
       down: false
     }
 
-    // console.log(js);
     if (js.x >= 0.1) {
-      // if (this.velY > -this.speed) {
-      //   this.velY --;
-      // }
       direction.up = true;
     }
-    //
+
     if (js.x <= -0.1) {
-    //   if (this.velY < this.speed) {
-    //     this.velY ++;
-    //   }
       direction.down = true;
     }
-    //
+
     if (js.y >= 0.1) {
-    //   if (this.velX > -this.speed) {
-    //     this.velX ++;
-    //   }
       direction.right = true;
     }
-    //
+
     if (js.y <= -0.1) {
-    //   if (this.velX < this.speed) {
-    //     //this.velX --;
-    //   }
       direction.left = true;
     }
-    //
+
     if (js.y >= 0.2 || js.x >= 0.2) {
       this.angle = js.x;
     }
-    //
+
     // this.move();
-
-
 
     const mapToDegrees = this.map(this.angle, 1, -1, 42, -42);
 
@@ -135,7 +122,7 @@ class Car {
     }
   }
 
-  moveCar() {
+  arrowControl() {
     if (this.keys[38]) {
       if (this.velY > -this.speed) {
         this.velY --;
@@ -163,10 +150,30 @@ class Car {
     // this.move();
   }
 
+  miniJoystickControl(dir) {
+    this.velX = 0;
+    this.velY = 0;
+    const speed = 0.05;
+
+    if (dir.right === true && dir.up === false && dir.down === false) {
+      this.velX = speed;
+      this.angle = 0;
+    }
+
+    if (dir.up === true && dir.right === false && dir.left === false) {
+      this.velY = -speed;
+      this.angle = 0.5;
+    }
+
+    this.move();
+    if (this.joystickPause === true) return;
+    requestAnimationFrame(() => this.miniJoystickControl(dir));
+  }
+
   move() {
-    this.velY *= this.friction;
+    // this.velY *= this.friction;
     this.m.goblin.position.z += this.velY;
-    this.velX *= this.friction;
+    // this.velX *= this.friction;
     this.m.goblin.position.x += this.velX;
 
     const mapToDegrees = this.map(this.angle, 1, -1, 30, -30);

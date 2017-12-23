@@ -60,8 +60,8 @@ const init = () => {
   blimp.mesh.position.z = 150;
   scene.add(blimp.mesh);
 
-  kayak = new Kayak();
-  scene.add(kayak.mesh);
+  // kayak = new Kayak();
+  // scene.add(kayak.mesh);
 
   new Tree(100, -47);
   new Tree(80, -40);
@@ -261,6 +261,7 @@ const loop = () => {
     car.joystick(joystick);
     console.log(joystick.x);
   }
+
   kayak.wiggle();
 
   setTimeout(() => {

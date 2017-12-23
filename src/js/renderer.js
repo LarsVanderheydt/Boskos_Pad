@@ -1,5 +1,6 @@
 const Colors = require('./objects/Colors');
 const Floor = require('./classes/Floor');
+const Water = require('./classes/Water');
 const Car = require('./classes/Car');
 const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
@@ -32,7 +33,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor, car, tree, plane;
+let floor, water, car, tree, plane, kayak;
 let world;
 
 let analogJoystick;
@@ -60,8 +61,44 @@ const init = () => {
   blimp.mesh.position.z = 150;
   scene.add(blimp.mesh);
 
-  kayak = new Kayak();
-  scene.add(kayak.mesh);
+  // kayak = new Kayak();
+  // scene.add(kayak.mesh);
+
+  new Tree(100, -47);
+  new Tree(80, -40);
+  new Tree(95, -41);
+  new Tree(88, -40);
+  new Tree(78, -47);
+  new Tree(86, -48);
+  new Tree(94, -50);
+
+  new Tree(104, 80);
+  new Tree(135, 80);
+
+  new Tree(104, 60);
+  new Tree(135, 60);
+
+  new Tree(104, 40);
+  new Tree(135, 40);
+
+  // new Tree(104, 20);
+  // new Tree(135, 20);
+
+  new Tree(104, 0);
+  new Tree(135, 0);
+
+  // new Tree(104, -20);
+  // new Tree(135, -20);
+
+  new Tree(104, -40);
+  new Tree(135, -40);
+
+  new Tree(104, -60);
+  new Tree(135, -60);
+
+  new Tree(104, -80);
+  new Tree(135, -80);
+
 
   plane = new Plane();
   plane.mesh.position.x = -20;
@@ -74,6 +111,13 @@ const init = () => {
   setInterval(() => {
     plane.pause = false;
   }, startPlaneAfter);
+
+  kayak = new Kayak();
+  kayak.mesh.position.x = 120;
+  kayak.mesh.position.y = -40;
+  kayak.mesh.position.z = -10;
+
+  scene.add(kayak.mesh);
 
   board.on("ready", () => {
     analogJoystick = new five.Joystick({
@@ -119,6 +163,7 @@ const init = () => {
   console.log("ik ben een boom op positie " + tree.mesh.position.x + " " + tree.mesh.position.y + " " + tree.mesh.position.z);
 
   floor = new Floor();
+  water = new Water();
   road = new Road();
   road.mesh.position.x = -7.5;
   road.mesh.position.z = -35.6;
@@ -255,6 +300,7 @@ const loop = () => {
   //   car.joystick(analogJoystick);
   // }
 
+  kayak.wiggle();
 
   setTimeout(() => {
     blimp.fly();

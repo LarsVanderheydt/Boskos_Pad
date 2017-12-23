@@ -4,7 +4,7 @@ class Floor {
   constructor() {
     const mat = new THREE.MeshPhongMaterial({
       side: THREE.DoubleSide,
-      color: Colors.red
+      color: Colors.green
     });
 
     const m = exampleUtils.createPlane(1, 100, 80, 0, mat);

@@ -2,13 +2,19 @@ const Colors = require('./objects/Colors');
 const Floor = require('./classes/Floor');
 const Water = require('./classes/Water');
 const Car = require('./classes/Car');
+const Train = require('./classes/Train');
 const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
 const Blimp = require('./classes/Blimp');
 const Plane = require('./classes/Plane');
 const Kayak = require('./classes/Kayak');
+const House1 = require('./classes/House1');
+const Chalet = require('./classes/Chalet');
 
-// get aal coordinates from all dubplicate objects like trees, ...
+const Sky = require('./classes/Sky');
+const Cloud = require('./classes/Cloud');
+
+// get all coordinates from all dubplicate objects like trees, ...
 const coords = require('../assets/coords.json');
 
 const five = require('johnny-five');
@@ -33,8 +39,9 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let floor, water, car, tree, plane, kayak;
+let train, cloud, sky, floor, water, car, tree, plane, kayak, house1, chalet;
 let world;
+// let controls, scene, camera, box, spline, counter = 0;
 
 let analogJoystick;
 let joystick = {};
@@ -49,8 +56,16 @@ const init = () => {
 
   // light
   createLight();
+  //controls = new THREE.TrackballControls(camera);
+
+  train = new Train();
+//console.log(train.mesh.position.x);
 
   car = new Car();
+
+  sky = new Sky();
+  sky.mesh.position.y = 30;
+  scene.add(sky.mesh);
 
   const trees = new THREE.Object3D();
   trees.name = "trees group";
@@ -65,45 +80,6 @@ const init = () => {
   blimp.mesh.position.x = 160;
   blimp.mesh.position.z = 150;
   scene.add(blimp.mesh);
-
-  // kayak = new Kayak();
-  // scene.add(kayak.mesh);
-
-  // new Tree(100, -47);
-  // new Tree(80, -40);
-  // new Tree(95, -41);
-  // new Tree(88, -40);
-  // new Tree(78, -47);
-  // new Tree(86, -48);
-  // new Tree(94, -50);
-  //
-  // new Tree(104, 80);
-  // new Tree(135, 80);
-  //
-  // new Tree(104, 60);
-  // new Tree(135, 60);
-  //
-  // new Tree(104, 40);
-  // new Tree(135, 40);
-  //
-  // // new Tree(104, 20);
-  // // new Tree(135, 20);
-  //
-  // new Tree(104, 0);
-  // new Tree(135, 0);
-  //
-  // // new Tree(104, -20);
-  // // new Tree(135, -20);
-  //
-  // new Tree(104, -40);
-  // new Tree(135, -40);
-  //
-  // new Tree(104, -60);
-  // new Tree(135, -60);
-  //
-  // new Tree(104, -80);
-  // new Tree(135, -80);
-
 
   plane = new Plane();
   plane.mesh.position.x = -20;
@@ -123,6 +99,12 @@ const init = () => {
   kayak.mesh.position.z = -10;
 
   scene.add(kayak.mesh);
+
+  house1 = new House1();
+  scene.add(house1.mesh);
+
+  chalet = new Chalet();
+  scene.add(chalet.mesh);
 
   board.on("ready", () => {
     analogJoystick = new five.Joystick({
@@ -167,6 +149,11 @@ const init = () => {
 
   floor = new Floor();
   water = new Water();
+  // water.mesh.position.y = 4;
+
+  // add the mesh of the water to the scene
+  // scene.add(water.mesh);
+
   road = new Road(-7.5, -35.6);
 
   if (canGame() === true) {
@@ -299,6 +286,9 @@ const loop = () => {
   // if (analogJoystick) {
   //   car.joystick(analogJoystick);
   // }
+  train.moveBox();
+  // cloud.float();
+  sky.float();
 
   kayak.wiggle();
 

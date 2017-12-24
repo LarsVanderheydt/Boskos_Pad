@@ -3,8 +3,12 @@ const Colors = require('../objects/Colors');
 class Water {
   constructor() {
     const mat = new THREE.MeshPhongMaterial({
-      side: THREE.DoubleSide,
-      color: Colors.blue
+      color: 0x00aeff,
+      emissive: 0x0023b9,
+      shading: THREE.FlatShading,
+      shininess: 60,
+      specular: 30,
+      transparent: true
     });
 
     const w = exampleUtils.createPlane(1, 10, 80, 0, mat);

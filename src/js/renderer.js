@@ -1,24 +1,28 @@
 const Colors = require('./objects/Colors');
 const Floor = require('./classes/Floor');
 const Water = require('./classes/Water');
-const Car = require('./classes/Car');
-const Train = require('./classes/Train');
-const Tree = require('./classes/Tree');
+const Car = require('./classes/Objects/Car');
+const Train = require('./classes/Objects/Train');
+const Tree = require('./classes/Objects/Tree');
 const Road = require('./classes/Road');
-const Blimp = require('./classes/Blimp');
-const Plane = require('./classes/Plane');
-const Kayak = require('./classes/Kayak');
-const House1 = require('./classes/House1');
-const Chalet = require('./classes/Chalet');
+const Blimp = require('./classes/Objects/Blimp');
+const Plane = require('./classes/Objects/Plane');
+const Kayak = require('./classes/Objects/Kayak');
+const House1 = require('./classes/Objects/House1');
+const Chalet = require('./classes/Objects/Chalet');
 
 const Sky = require('./classes/Sky');
 const Cloud = require('./classes/Cloud');
+
+const FogGame = require('./classes/SaboteurGames/FogGame');
+const SoundLvl = require('./classes/SaboteurGames/SoundLevelSensor');
 
 // get all coordinates from all dubplicate objects like trees, ...
 const coords = require('../assets/coords.json');
 
 const five = require('johnny-five');
-const board = new five.Board();
+const boards = new five.Boards([ "A", "B" ]);
+
 let game;
 
 const Readable = require('stream').Readable;
@@ -59,7 +63,7 @@ const init = () => {
   //controls = new THREE.TrackballControls(camera);
 
   train = new Train();
-//console.log(train.mesh.position.x);
+  //console.log(train.mesh.position.x);
 
   car = new Car();
 
@@ -106,44 +110,87 @@ const init = () => {
   chalet = new Chalet();
   scene.add(chalet.mesh);
 
-  board.on("ready", () => {
-    analogJoystick = new five.Joystick({
-      pins: ["A0", "A1"]
-    });
+  // board.on("ready", () => {
+  //   analogJoystick = new five.Joystick({
+  //     pins: ["A0", "A1"]
+  //   });
+  //
+  //   const dir = {
+  //     left: false,
+  //     right: false,
+  //     up: false,
+  //     down: false
+  //   }
+  //
+  //   joystick.right = new five.Button(8);
+  //
+  //   joystick.right.on("press", () => {
+  //     dir.right = true;
+  //     car.joystickPause = false;
+  //     car.miniJoystickControl(dir);
+  //   });
+  //
+  //   joystick.right.on("release", () => {
+  //     dir.right = false;
+  //     car.joystickPause = true;
+  //     car.miniJoystickControl(dir);
+  //   });
+  //
+  //   joystick.up = new five.Button(9);
+  //
+  //   joystick.up.on("press", () => {
+  //     dir.up = true;
+  //     car.joystickPause = false;
+  //     car.miniJoystickControl(dir);
+  //   });
+  //
+  //   joystick.up.on("release", () => {
+  //     dir.up = false;
+  //     car.joystickPause = true;
+  //     car.miniJoystickControl(dir);
+  //   });
+  // });
 
-    const dir = {
-      left: false,
-      right: false,
-      up: false,
-      down: false
+  const secondSet = {
+    first: {
+      btn: 8,
+      led: 11
+    },
+    second: {
+      btn: 9,
+      led: 12
+    },
+    third: {
+      btn: 10,
+      led: 13
     }
+  }
 
-    joystick.right = new five.Button(8);
+  boards.on("ready", () => {
+    boards.each(board => {
 
-    joystick.right.on("press", () => {
-      dir.right = true;
-      car.joystickPause = false;
-      car.miniJoystickControl(dir);
-    });
+      if (board.id === 'A') {
+        // sound sensor game
+        const fogGame = new FogGame(secondSet, board, "A0");
 
-    joystick.right.on("release", () => {
-      dir.right = false;
-      car.joystickPause = true;
-      car.miniJoystickControl(dir);
-    });
+        // const sound = new SoundLvl("A0");
 
-    joystick.up = new five.Button(9);
+        const loop = () => {
 
-    joystick.up.on("press", () => {
-      dir.up = true;
-      car.joystickPause = false;
-      car.miniJoystickControl(dir);
-    });
+          if (fogGame.sound.level) {
+            scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.sound.level * 1.2), 700);
+          }
 
-    joystick.up.on("release", () => {
-      dir.up = false;
-      car.joystickPause = true;
-      car.miniJoystickControl(dir);
+          requestAnimationFrame(loop);
+        }
+
+        loop();
+      }
+      if (board.id === 'B') {
+
+        // new SabGameS(secondSet, board);
+
+      }
     });
   });
 
@@ -199,7 +246,7 @@ const createScene = () => {
   HEIGHT = window.innerHeight;
   WIDTH = window.innerWidth;
 
-  // create scene and fog
+  // create scene
   scene = new THREE.Scene();
   scene.name = 'Scene';
 

@@ -1,4 +1,4 @@
-const Colors = require('../objects/Colors');
+const Colors = require('../../objects/Colors');
 let t;
 const tree = {};
 

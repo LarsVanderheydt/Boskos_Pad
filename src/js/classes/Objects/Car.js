@@ -7,7 +7,7 @@ VRy: A1
 
 */
 
-const Colors = require('../objects/Colors');
+const Colors = require('../../objects/Colors');
 let m;
 
 class Car {

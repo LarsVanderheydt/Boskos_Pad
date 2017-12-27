@@ -4,7 +4,7 @@ class Plane {
   constructor() {
     this.mesh = new THREE.Object3D();
     this.speed = 0.2;
-    this.angle = -45 * (Math.PI / 180);
+    this.angle = -45 * (Math.PI/180);
     this.pause = false;
 
     const texture = new THREE.TextureLoader().load('./js/models/airplane/Airplane_Texture.png');
@@ -12,26 +12,26 @@ class Plane {
     const loader = new THREE.OBJLoader();
 
     loader.load('./js/models/airplane/Airplane.obj', object => {
-      object.scale.set(4, 4, 4);
+        object.scale.set(0.01, 0.01, 0.01);
 
-      object.children.forEach(obj => {
-        obj.castShadow = true;
-        obj.receiveShadow = true;
-      });
+        object.children.forEach(obj => {
+          obj.castShadow = true;
+          obj.receiveShadow = true;
+        });
 
-      object.castShadow = true;
-      object.receiveShadow = true;
+        object.castShadow = true;
+        object.receiveShadow = true;
 
-      object.rotation.y = this.angle + (Math.PI / 180);
-      object.position.y = 40;
+        object.rotation.y = this.angle + (90 * (Math.PI/180));
+        object.position.y = 40;
 
-      object.traverse(child => {
-        if (child instanceof THREE.Mesh) {
-          child.material = material;
-        }
-      });
+        object.traverse(child => {
+          if ( child instanceof THREE.Mesh ) {
+            child.material = material;
+          }
+        });
 
-      this.mesh.add(object);
+        this.mesh.add(object);
     });
   }
 

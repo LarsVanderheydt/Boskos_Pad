@@ -10,6 +10,7 @@ const Cloud = require('./classes/Cloud');
 const Car = require('./classes/Objects/Car');
 const Train = require('./classes/Objects/Train');
 const Tree = require('./classes/Objects/Tree');
+const Flower = require('./classes/Objects/Flower');
 const Blimp = require('./classes/Objects/Blimp');
 const Plane = require('./classes/Objects/Plane');
 const Kayak = require('./classes/Objects/Kayak');
@@ -22,12 +23,14 @@ const Gate = require('./classes/Objects/Gate');
   note: duplicates off game classes for solid use of all leds
   -- one class and 2 instances = leds will fail to work normaly --
 */
+
 const FogGame = require('./classes/SaboteurGames/FogGame');
 const SoundLvl = require('./classes/SaboteurGames/SoundLevelSensor');
 const GateGame = require('./classes/SaboteurGames/GateGame');
 
 // get all coordinates from all duplicate objects like trees, ...
-const coords = require('../assets/coords.json');
+const coordsTree = require('../assets/coords_tree.json');
+const coordsFlower = require('../assets/coords_flower.json');
 
 const ports = [
   { id: "B", port: "/dev/cu.wchusbserial1410" },
@@ -55,7 +58,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, sky, floor, water, car, tree, plane, kayak, house1, chalet, gate;
+let train, cloud, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate;
 let world;
 // let controls, scene, camera, box, spline, counter = 0;
 
@@ -89,12 +92,28 @@ const init = () => {
 
   const trees = new THREE.Object3D();
   trees.name = "trees group";
-  coords.trees.forEach(tree => {
+  coordsTree.trees.forEach(tree => {
     tree = new Tree(tree.x, tree.y);
     tree.mesh.name = 'tree';
     trees.add(tree.mesh);
   });
   scene.add(trees);
+
+  const flowers = new THREE.Object3D();
+  flowers.name = "flowers group";
+
+  for (let i = 0; i < 35; i++) {
+    flower = new Flower();
+    flower.mesh.name = 'flower';
+    flower.mesh.scale.set(0.04, 0.04, 0.04);
+    flower.mesh.rotation.x = 1.5;
+    flowers.add(flower.mesh);
+  }
+  flowers.position.z = -45;
+  flowers.position.x = -15;
+  flowers.rotation.y = 0.8;
+  scene.add(flowers);
+
 
   blimp = new Blimp();
   blimp.mesh.position.x = 160;

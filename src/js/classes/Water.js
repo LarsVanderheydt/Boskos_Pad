@@ -5,7 +5,6 @@ class Water {
     const mat = new THREE.MeshPhongMaterial({
       color: 0x00aeff,
       emissive: 0x0023b9,
-      shading: THREE.FlatShading,
       shininess: 60,
       specular: 30,
       transparent: true

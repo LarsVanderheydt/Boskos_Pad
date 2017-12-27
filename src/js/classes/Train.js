@@ -29,13 +29,13 @@ class Train {
     }
 
     let line = new THREE.Line(geometry, material);
-    //line.add(line);
+    //this.add(line);
 
     geometry = new THREE.BoxGeometry(5, 40, 4);
     material = new THREE.MeshBasicMaterial({color: 0xff0000});
 
     box = new THREE.Mesh(geometry, material);
-    //box.add(box);
+    //this.add(box);
 
   }
   moveBox() {

@@ -1,24 +1,40 @@
+const five = require('johnny-five');
 const Colors = require('./objects/Colors');
+
 const Floor = require('./classes/Floor');
 const Water = require('./classes/Water');
-const Car = require('./classes/Car');
-const Train = require('./classes/Train');
-const Tree = require('./classes/Tree');
 const Road = require('./classes/Road');
-const Blimp = require('./classes/Blimp');
-const Plane = require('./classes/Plane');
-const Kayak = require('./classes/Kayak');
-const House1 = require('./classes/House1');
-const Chalet = require('./classes/Chalet');
-
 const Sky = require('./classes/Sky');
 const Cloud = require('./classes/Cloud');
 
-// get all coordinates from all dubplicate objects like trees, ...
+const Car = require('./classes/Objects/Car');
+const Train = require('./classes/Objects/Train');
+const Tree = require('./classes/Objects/Tree');
+const Blimp = require('./classes/Objects/Blimp');
+const Plane = require('./classes/Objects/Plane');
+const Kayak = require('./classes/Objects/Kayak');
+const House1 = require('./classes/Objects/House1');
+const Chalet = require('./classes/Objects/Chalet');
+const Gate = require('./classes/Objects/Gate');
+
+// saboteur games
+/*
+  note: duplicates off game classes for solid use of all leds
+  -- one class and 2 instances = leds will fail to work normaly --
+*/
+const FogGame = require('./classes/SaboteurGames/FogGame');
+const SoundLvl = require('./classes/SaboteurGames/SoundLevelSensor');
+const GateGame = require('./classes/SaboteurGames/GateGame');
+
+// get all coordinates from all duplicate objects like trees, ...
 const coords = require('../assets/coords.json');
 
-const five = require('johnny-five');
-const board = new five.Board();
+const ports = [
+  { id: "B", port: "/dev/cu.wchusbserial1410" },
+  { id: "A", port: "/dev/cu.usbmodem1421" }];
+
+const boards = new five.Boards(ports);
+
 let game;
 
 const Readable = require('stream').Readable;
@@ -39,9 +55,13 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, sky, floor, water, car, tree, plane, kayak, house1, chalet;
+let train, cloud, sky, floor, water, car, tree, plane, kayak, house1, chalet, gate;
 let world;
 // let controls, scene, camera, box, spline, counter = 0;
+
+let fogGame = "";
+let gateGame = "";
+let openGate = false;
 
 let analogJoystick;
 let joystick = {};
@@ -59,7 +79,7 @@ const init = () => {
   //controls = new THREE.TrackballControls(camera);
 
   train = new Train();
-//console.log(train.mesh.position.x);
+  //console.log(train.mesh.position.x);
 
   car = new Car();
 
@@ -106,44 +126,38 @@ const init = () => {
   chalet = new Chalet();
   scene.add(chalet.mesh);
 
-  board.on("ready", () => {
-    analogJoystick = new five.Joystick({
-      pins: ["A0", "A1"]
-    });
+  gate = new Gate(86.18, -24.10, 89.50);
+  scene.add(gate.mesh);
 
-    const dir = {
-      left: false,
-      right: false,
-      up: false,
-      down: false
-    }
+  boards.on("ready", () => {
+    boards.each(board => {
+      if (board.id === 'A') {
 
-    joystick.right = new five.Button(8);
+        // sound sensor game
+        fogGame = new FogGame({
+          first: { btn: 8, led: 11 },
+          second: { btn: 9, led: 12 },
+          third: { btn: 10, led: 13 }
+        }, board, "A0");
 
-    joystick.right.on("press", () => {
-      dir.right = true;
-      car.joystickPause = false;
-      car.miniJoystickControl(dir);
-    });
+      }
+      if (board.id === 'B') {
+        // tilt switch game
+        gateGame = new GateGame({
+          first: { btn: 8, led: 11 },
+          second: { btn: 9, led: 12 },
+          third: { btn: 10, led: 13 }
+        }, board, 4);
 
-    joystick.right.on("release", () => {
-      dir.right = false;
-      car.joystickPause = true;
-      car.miniJoystickControl(dir);
-    });
+        new five.Button({pin: 8, board}).on('press', () => {
+          openGate = true;
+        });
 
-    joystick.up = new five.Button(9);
+        // joystick
+        const pins = { right: 7, up: 6, down: 5 }
+        handleJoystick(pins);
 
-    joystick.up.on("press", () => {
-      dir.up = true;
-      car.joystickPause = false;
-      car.miniJoystickControl(dir);
-    });
-
-    joystick.up.on("release", () => {
-      dir.up = false;
-      car.joystickPause = true;
-      car.miniJoystickControl(dir);
+      }
     });
   });
 
@@ -170,6 +184,55 @@ const init = () => {
   }
 
   loop();
+}
+
+const handleJoystick = ({right, up, down}) => {
+  const dir = {
+    left: false,
+    right: false,
+    up: false,
+    down: false
+  }
+
+  joystick.right = new five.Button({pin: 7, invert: true});
+  joystick.up = new five.Button({pin: 6, invert: true});
+  joystick.down = new five.Button({pin: 5, invert: true});
+
+  joystick.right.on("press", () => {
+    dir.right = true;
+    car.joystickPause = false;
+    car.miniJoystickControl(dir);
+  });
+
+  joystick.right.on("release", () => {
+    dir.right = false;
+    car.joystickPause = true;
+    car.miniJoystickControl(dir);
+  });
+
+  joystick.up.on("press", () => {
+    dir.up = true;
+    car.joystickPause = false;
+    car.miniJoystickControl(dir);
+  });
+
+  joystick.up.on("release", () => {
+    dir.up = false;
+    car.joystickPause = true;
+    car.miniJoystickControl(dir);
+  });
+
+  joystick.down.on("press", () => {
+    dir.down = true;
+    car.joystickPause = false;
+    car.miniJoystickControl(dir);
+  });
+
+  joystick.down.on("release", () => {
+    dir.down = false;
+    car.joystickPause = true;
+    car.miniJoystickControl(dir);
+  });
 }
 
 /* GAMEPAD */
@@ -199,7 +262,7 @@ const createScene = () => {
   HEIGHT = window.innerHeight;
   WIDTH = window.innerWidth;
 
-  // create scene and fog
+  // create scene
   scene = new THREE.Scene();
   scene.name = 'Scene';
 
@@ -283,19 +346,32 @@ const createLight = () => {
 
 const loop = () => {
   car.arrowControl();
-  // if (analogJoystick) {
-  //   car.joystick(analogJoystick);
-  // }
+
   train.moveBox();
   // cloud.float();
   sky.float();
-
   kayak.wiggle();
 
   setTimeout(() => {
     blimp.fly();
   }, 60000);
   plane.fly();
+
+  if (gateGame.closeGate && !gateGame.closed) {
+    gateGame.closed = gate.close();
+  } else {
+    gateGame.closeGate = false;
+  }
+
+  if (!gateGame.closeGate && gateGame.closed && openGate) {
+    gateGame.closed = gate.open();
+  } else {
+    openGate = false;
+  }
+
+  if (fogGame.sound) {
+    scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.sound.level * 1.2), 700);
+  }
 
   exampleUtils.run();
   renderer.render(scene, camera);

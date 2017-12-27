@@ -7,7 +7,7 @@ VRy: A1
 
 */
 
-const Colors = require('../objects/Colors');
+const Colors = require('../../objects/Colors');
 let m;
 
 class Car {
@@ -157,15 +157,21 @@ class Car {
   miniJoystickControl(dir) {
     this.velX = 0;
     this.velY = 0;
-    // const speed = 0.05;
+    const speed = 1;
 
     if (dir.right === true && dir.up === false && dir.down === false) {
-      this.velX = this.speed;
+      this.velX = speed;
       this.angle = 0;
     }
 
     if (dir.up === true && dir.right === false && dir.left === false) {
-      this.velY = -this.speed;
+      this.velY = -speed;
+      this.angle = 0.45;
+    }
+
+    if (dir.down === true && dir.right === false && dir.left === false) {
+      this.velY = speed;
+      this.angle = -0.45;
     }
 
     this.move();

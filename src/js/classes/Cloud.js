@@ -21,7 +21,7 @@ class Cloud {
 
       // set the position and the rotation of each cube randomly
       m.position.x = i * 2;
-    //  m.position.y = Math.random() * 5;
+      //  m.position.y = Math.random() * 5;
       m.position.z = Math.random() * 5;
       m.rotation.z = Math.random() * Math.PI * 2;
       m.rotation.y = Math.random() * Math.PI * 2;
@@ -41,7 +41,7 @@ class Cloud {
 
   // float(object) {
   //    this.mesh.position.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.05;
-  //   //requestAnimationFrame(() => this.wiggle(object));
+  //   requestAnimationFrame(() => this.wiggle(object));
   // }
 }
 

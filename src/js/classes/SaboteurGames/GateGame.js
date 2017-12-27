@@ -1,6 +1,5 @@
 const Timer = require('../Timer');
 const five = require('johnny-five');
-const SoundLevelSensor = require('./SoundLevelSensor');
 
 let walkTimer, sequenceTimer, countdownTimer, blinkTimer = '';
 const timerLoops = 250;
@@ -13,11 +12,13 @@ let gameTimer = '';
 let complete = false;
 let timesFailed = 0;
 
-class FogGame {
-  constructor({first, second, third}, board, soundLvlPin) {
+class GateGame {
+  constructor({first, second, third}, board, tiltPin) {
+    this.closeGate = true;
+    this.closed = false;
+
     this.board = board;
-    this.sound = '';
-    this.soundLvlPin = soundLvlPin;
+    this.tilt = new five.Button({pin: tiltPin, invert: true, board});
     this.buttons = [
       {
         button: new five.Button({pin: first.btn, board: board}),
@@ -60,7 +61,11 @@ class FogGame {
   }
 
   powerUpReady() {
-    this.sound = new SoundLevelSensor(this.board, this.soundLvlPin);
+    this.tilt.on("up", () => {
+      if (!this.closed && !this.closeGate) {
+        this.closeGate = true;
+      }
+    });
   }
 
   // blink for 2 seconds, then give a button to push on
@@ -333,4 +338,4 @@ class FogGame {
   }
 }
 
-module.exports = FogGame;
+module.exports = GateGame;

@@ -1,5 +1,4 @@
 const Colors = require('../objects/Colors');
-const loader = new THREE.OBJLoader();
 const JSONloader = new THREE.JSONLoader();
 
 class Road {

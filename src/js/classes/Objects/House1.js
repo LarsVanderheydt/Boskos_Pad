@@ -10,31 +10,29 @@ class House1 {
     const loader = new THREE.OBJLoader();
 
     loader.load('./js/models/house1/house1.obj', object => {
-        object.scale.set(scale, scale, scale);
+      object.scale.set(scale, scale, scale);
 
-        object.position.x = -1;
-        object.position.y = 3.2;
-        object.position.z = -5;
+      object.position.x = -1;
+      object.position.y = 3.2;
+      object.position.z = -5;
 
-        object.rotation.y = 100.5;
+      object.rotation.y = 100.5;
 
-        object.children.forEach(obj => {
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-        });
+      object.children.forEach(obj => {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      });
 
-        object.castShadow = true;
-        object.receiveShadow = true;
+      object.castShadow = true;
+      object.receiveShadow = true;
 
+      object.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          child.material = material;
+        }
+      });
 
-
-        object.traverse(child => {
-          if ( child instanceof THREE.Mesh ) {
-            child.material = material;
-          }
-        });
-
-        this.mesh.add(object);
+      this.mesh.add(object);
     });
   }
 }

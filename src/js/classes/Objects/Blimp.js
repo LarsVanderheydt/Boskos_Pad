@@ -6,7 +6,7 @@ class Blimp {
     this.mesh = new THREE.Object3D();
     this.mesh.name = "Blimp";
     this.speed = 0.02;
-    this.angle = -160 * (Math.PI/180);
+    this.angle = -160 * (Math.PI / 180);
     this.pause = false;
 
     const texture = new THREE.TextureLoader().load('./js/models/blimp/Blimp_BaseColor.png');
@@ -14,26 +14,26 @@ class Blimp {
     const loader = new THREE.OBJLoader();
 
     loader.load('./js/models/blimp/Blimp.obj', object => {
-        object.scale.set(scale, scale, scale);
+      object.scale.set(scale, scale, scale);
 
-        object.children.forEach(obj => {
-          obj.castShadow = true;
-          obj.receiveShadow = true;
-        });
+      object.children.forEach(obj => {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      });
 
-        object.castShadow = true;
-        object.receiveShadow = true;
+      object.castShadow = true;
+      object.receiveShadow = true;
 
-        object.rotation.y = this.angle + (Math.PI/180);
-        object.position.y = 40;
+      object.rotation.y = this.angle + (Math.PI / 180);
+      object.position.y = 40;
 
-        object.traverse(child => {
-          if ( child instanceof THREE.Mesh ) {
-            child.material = material;
-          }
-        });
+      object.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          child.material = material;
+        }
+      });
 
-        this.mesh.add(object);
+      this.mesh.add(object);
     });
   }
 

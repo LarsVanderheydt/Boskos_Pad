@@ -14,7 +14,7 @@ let timesFailed = 0;
 
 class GateGame {
   constructor({first, second, third}, board, tiltPin) {
-    this.closeGate = true;
+    this.closeGate = false;
     this.closed = false;
 
     this.board = board;

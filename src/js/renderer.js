@@ -1,3 +1,11 @@
+/*
+  28/12/'17'
+  Joystick:
+    Red: Right
+    Oranje: Up
+    Wit: Down
+    Zwart: Gnd
+*/
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 
@@ -29,11 +37,7 @@ const GateGame = require('./classes/SaboteurGames/GateGame');
 // get all coordinates from all duplicate objects like trees, ...
 const coords = require('../assets/coords.json');
 
-const ports = [
-  { id: "B", port: "/dev/cu.wchusbserial1410" },
-  { id: "A", port: "/dev/cu.usbmodem1421" }];
-
-const boards = new five.Boards(ports);
+const boards = new five.Boards(["A", "B"]);
 
 let game;
 
@@ -369,8 +373,8 @@ const loop = () => {
     openGate = false;
   }
 
-  if (fogGame.sound) {
-    scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.sound.level * 1.2), 700);
+  if (fogGame.level !== 0) {
+    scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.level * 1.2), 700);
   }
 
   exampleUtils.run();

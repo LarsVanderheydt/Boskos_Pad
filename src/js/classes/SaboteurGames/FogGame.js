@@ -15,9 +15,9 @@ let timesFailed = 0;
 
 class FogGame {
   constructor({first, second, third}, board, soundLvlPin) {
-    this.board = board;
-    this.sound = '';
-    this.soundLvlPin = soundLvlPin;
+    this.level = 0;
+    this.sensor = new five.Sensor({pin: soundLvlPin, board: board});
+
     this.buttons = [
       {
         button: new five.Button({pin: first.btn, board: board}),
@@ -41,6 +41,7 @@ class FogGame {
     this.buttons.forEach(btn => {
       // initialize buttons only once to avoid memory leaks
       btn.button.on('press', () => {
+        this.level = 0;
         timesFailed = 0;
         if (complete) return;
 
@@ -60,7 +61,16 @@ class FogGame {
   }
 
   powerUpReady() {
-    this.sound = new SoundLevelSensor(this.board, this.soundLvlPin);
+    this.level = 1;
+
+    new five.Led(13).on();
+
+    this.sensor.on("change", () => {
+      const constr = this.sensor.scaleTo(0, 100);
+      // if (this.level <= 0) this.level = 1;
+
+      if (constr >= 10) this.level -= 0.01;
+    });
   }
 
   // blink for 2 seconds, then give a button to push on

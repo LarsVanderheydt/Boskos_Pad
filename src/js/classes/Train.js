@@ -1,6 +1,4 @@
-let box,
-  spline,
-  counter = 0;
+let box, spline, counter = 0;
 
 let tangent = new THREE.Vector3();
 const axis = new THREE.Vector3();

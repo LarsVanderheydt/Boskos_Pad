@@ -11,11 +11,18 @@ let leds = [0, 1, 2];
 let gameTimer = '';
 let complete = false;
 let timesFailed = 0;
+let r = 255, g = 255, b = 255;
 
-class FogGame {
-  constructor({first, second, third}, board, soundLvlPin) {
-    this.level = 10;
-    this.sensor = new five.Sensor({pin: soundLvlPin, board: board});
+class TrainGame {
+  constructor({first, second, third}, board, {joystick, rgb}) {
+    this.rgb = new five.Led.RGB({
+      pins: {
+        red: rgb.r,
+        green: rgb.g,
+        blue: rgb.b
+      }, board: board
+    });
+    this.joystick = new five.Joystick({pins: [joystick.x, joystick.y], board: board});
 
     this.buttons = [
       {
@@ -60,15 +67,26 @@ class FogGame {
   }
 
   powerUpReady() {
-    this.level = 1;
+    this.joystick.on('change', () => {
+      if (this.joystick.x >= 0.5) b -= 15;
+      if (this.joystick.x <= -0.5) g += 15;
+      if (this.joystick.y >= 0.5) b += 15;
+      if (this.joystick.y <= -0.5) g -= 15;
 
-    new five.Led(13).on();
+      if (r <= 0) r = 0;
+      if (g <= 0) g = 0;
+      if (b <= 0) b = 0;
 
-    this.sensor.on("change", () => {
-      const constr = this.sensor.scaleTo(0, 100);
-      // if (this.level <= 0) this.level = 1;
+      if (r >= 255) r = 255;
+      if (g >= 255) g = 255;
+      if (b >= 255) b = 255;
+    });
 
-      if (constr >= 10) this.level -= 0.01;
+
+    setInterval(() => {
+      console.log(r, g, b);
+
+      this.rgb.color(`rgb(${r}, ${g}, ${b})`);
     });
   }
 
@@ -342,4 +360,4 @@ class FogGame {
   }
 }
 
-module.exports = FogGame;
+module.exports = TrainGame;

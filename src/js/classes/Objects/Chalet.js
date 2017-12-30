@@ -1,11 +1,11 @@
-const scale = 0.011;
+const scale = 0.6;
 
 class Chalet {
   constructor() {
     this.mesh = new THREE.Object3D();
     this.mesh.name = "Chalet";
 
-    const texture = new THREE.TextureLoader().load('./js/models/chalet/Chalet_texture.png');
+    const texture = new THREE.TextureLoader().load('./js/models/chalet/Chalet_Texture.png');
     const material = new THREE.MeshBasicMaterial({map: texture});
     const loader = new THREE.OBJLoader();
 
@@ -14,9 +14,9 @@ class Chalet {
 
       object.position.x = 160;
       //object.position.y = 3.2;
-      object.position.z = -7;
+      object.position.z = -3.5;
 
-      object.rotation.y = 3.15;
+      object.rotation.y = 0;
 
       object.children.forEach(obj => {
         obj.castShadow = true;

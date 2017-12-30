@@ -27,6 +27,22 @@ class Car {
     this.up = false;
     this.down = false;
 
+    const mtlLoader = new THREE.MTLLoader();
+    mtlLoader.load('./js/models/car/car.mtl', materials => {
+      materials.preload();
+
+      const objLoader = new THREE.OBJLoader();
+      objLoader.setMaterials(materials);
+      objLoader.load('./js/models/car/car.obj', object => {
+        this.mesh = object;
+        this.mesh.position.y = 2;
+        this.mesh.rotation.y = 1.6;
+        this.mesh.scale.set(3.68, 3.68, 3.68);
+        scene.add(this.mesh);
+      });
+
+    });
+
     // const geom = new THREE.BoxGeometry(5, 2, 3);
     const mat = new THREE.MeshPhongMaterial({
       color: Colors.red
@@ -39,101 +55,24 @@ class Car {
 
     this.m.goblin.position.y = 2;
     this.m.goblin.linear_velocity.y = -2;
-    // this.m.goblin.setGravity(0, -10, 0);
-    // this.m.goblin.restitution = 0.3;
+    this.m.visible = false;
 
     this.m.name = 'Car';
     scene.add(this.m);
-  }
-
-
-  xboxControl(gp) {
-    if (gp.axes[1] <= -0.1) {
-      if (this.velY > -this.speed) {
-        this.velY --;
-      }
-    }
-
-    if (gp.axes[1] >= 0.1) {
-      if (this.velY < this.speed) {
-        this.velY ++;
-      }
-    }
-
-    if (gp.axes[0] >= 0.1) {
-      if (this.velX > -this.speed) {
-        this.velX ++;
-      }
-    }
-
-    if (gp.axes[0] <= -0.1) {
-      if (this.velX < this.speed) {
-        //this.velX --;
-      }
-    }
-
-    if (gp.axes[1] || gp.axes[1]) {
-      this.angle = -gp.axes[1];
-    }
-    this.move();
-  }
-
-  joystick(js) {
-    const direction = {
-      left: false,
-      right: false,
-      up: false,
-      down: false
-    }
-
-    if (js.x >= 0.1) {
-      direction.up = true;
-    }
-
-    if (js.x <= -0.1) {
-      direction.down = true;
-    }
-
-    if (js.y >= 0.1) {
-      direction.right = true;
-    }
-
-    if (js.y <= -0.1) {
-      direction.left = true;
-    }
-
-    if (js.y >= 0.2 || js.x >= 0.2) {
-      this.angle = js.x;
-    }
-
-    // this.move();
-
-    const mapToDegrees = this.map(this.angle, 1, -1, 42, -42);
-
-    const radians = mapToDegrees * (Math.PI/180);
-    this.m.goblin.rotation.y = radians;
-
-    const deg = this.map(this.angle, 1, -1, 90, -90);
-
-
-    if (direction.right === true) {
-      this.m.goblin.position.z += this.speed * Math.sin(-this.angle);
-      this.m.goblin.position.x += this.speed * Math.cos(-this.angle);
-    }
   }
 
   arrowControl() {
     if (this.keys[38]) {
       if (this.velY > -this.speed) {
         this.velY --;
-        this.angle = 0.45;
+        this.angle = 0.50;
       }
     }
 
     if (this.keys[40]) {
       if (this.velY < this.speed) {
         this.velY ++;
-        this.angle = -0.45;
+        this.angle = -0.50;
       }
     }
 
@@ -166,12 +105,12 @@ class Car {
 
     if (dir.up === true && dir.right === false && dir.left === false) {
       this.velY = -speed;
-      this.angle = 0.45;
+      this.angle = 0.50;
     }
 
     if (dir.down === true && dir.right === false && dir.left === false) {
       this.velY = speed;
-      this.angle = -0.45;
+      this.angle = -0.50;
     }
 
     this.move();
@@ -181,14 +120,20 @@ class Car {
 
   move() {
     this.velY *= this.friction;
-    this.m.goblin.position.z += this.velY;
     this.velX *= this.friction;
-    this.m.goblin.position.x += this.velX;
 
-    const mapToDegrees = this.map(this.angle, 1, -1, 90, -90);
+    this.m.goblin.position.x += this.velX;
+    this.m.goblin.position.z += this.velY;
+
+    const mapToDegrees = this.map(this.angle, 1, -1, 180, -180);
 
     const radians = mapToDegrees * (Math.PI/180);
-    this.m.goblin.rotation.y = radians;
+    // this.m.goblin.rotation.y = radians;
+    if (this.mesh) {
+      this.mesh.position.z = this.m.goblin.position.z;
+      this.mesh.position.x = this.m.goblin.position.x;
+      this.mesh.rotation.y = radians + 1.6;
+    }
   }
 
   map(value, start1, stop1, start2, stop2) {

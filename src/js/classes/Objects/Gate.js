@@ -1,6 +1,7 @@
 const Colors = require('../../objects/Colors');
 const JSONloader = new THREE.JSONLoader();
 const gateSpeed = 0.01;
+
 class Gate {
   constructor(xPos, zPos, yRot) {
     this.mesh = new THREE.Object3D();

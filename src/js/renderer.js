@@ -1,3 +1,11 @@
+/*
+  28/12/'17'
+  Joystick:
+    Red: Right
+    Oranje: Up
+    Wit: Down
+    Zwart: Gnd
+*/
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 
@@ -26,18 +34,14 @@ const Gate = require('./classes/Objects/Gate');
 */
 
 const FogGame = require('./classes/SaboteurGames/FogGame');
-const SoundLvl = require('./classes/SaboteurGames/SoundLevelSensor');
 const GateGame = require('./classes/SaboteurGames/GateGame');
+const TrainGame = require('./classes/SaboteurGames/TrainGame');
 
 // get all coordinates from all duplicate objects like trees, ...
 const coordsTree = require('../assets/coords_tree.json');
 const coordsFlower = require('../assets/coords_flower.json');
 
-const ports = [
-  { id: "B", port: "/dev/cu.wchusbserial1410" },
-  { id: "A", port: "/dev/cu.usbmodem1421" }];
-
-const boards = new five.Boards(ports);
+const boards = new five.Boards(["B", "A"]);
 
 let game;
 
@@ -67,7 +71,6 @@ let fogGame = "";
 let gateGame = "";
 let openGate = false;
 
-let analogJoystick;
 let joystick = {};
 
 let mousePos = {x: 0, y: 0};
@@ -146,7 +149,7 @@ const init = () => {
 
   boards.on("ready", () => {
     boards.each(board => {
-      if (board.id === 'A') {
+      if (board.id === 'B') {
 
         // sound sensor game
         fogGame = new FogGame({
@@ -156,21 +159,27 @@ const init = () => {
         }, board, "A0");
 
       }
-      if (board.id === 'B') {
+      if (board.id === 'A') {
         // tilt switch game
-        gateGame = new GateGame({
+        // gateGame = new GateGame({
+        //   first: { btn: 8, led: 11 },
+        //   second: { btn: 9, led: 12 },
+        //   third: { btn: 10, led: 13 }
+        // }, board, 4);
+        //
+        // new five.Button({pin: 8, board}).on('press', () => {
+        //   openGate = true;
+        // });
+        //
+
+        trainGame = new TrainGame({
           first: { btn: 8, led: 11 },
           second: { btn: 9, led: 12 },
           third: { btn: 10, led: 13 }
-        }, board, 4);
-
-        new five.Button({pin: 8, board}).on('press', () => {
-          openGate = true;
+        }, board, {
+          joystick: {x: "A0", y: "A1"},
+          rgb: {r: 3, g: 5, b: 6}
         });
-
-        // joystick
-        const pins = { right: 7, up: 6, down: 5 }
-        handleJoystick(pins);
 
       }
     });
@@ -192,22 +201,21 @@ const init = () => {
   water = new Water();
   road = new Road(-7.5, -35.6);
 
-
-  if (canGame() === true) {
-    window.addEventListener(`gamepadconnected`, connected());
-    window.addEventListener(`gamepaddisconnected`, disconnected());
-
-    const checkGP = window.setInterval(() => {
-      if (navigator.getGamepads()[0]) {
-        if(!hasGP) connected();
-      } else {
-        disconnected();
-      }
-    }, 500);
-  }
-
   loop();
 }
+
+// if (canGame() === true) {
+//   window.addEventListener(`gamepadconnected`, connected());
+//   window.addEventListener(`gamepaddisconnected`, disconnected());
+//
+//   const checkGP = window.setInterval(() => {
+//     if (navigator.getGamepads()[0]) {
+//       if(!hasGP) connected();
+//     } else {
+//       disconnected();
+//     }
+//   }, 500);
+// }
 
 const handleJoystick = ({right, up, down}) => {
   const dir = {
@@ -257,29 +265,6 @@ const handleJoystick = ({right, up, down}) => {
     car.miniJoystickControl(dir);
   });
 }
-
-/* GAMEPAD */
-
-const reportOnGamepad = () => {
-  const gp = navigator.getGamepads()[0];
-  // use gamepad
-  car.xboxControl(gp);
-}
-
-const canGame = () => "getGamepads" in navigator;
-
-const connected = () => {
-  hasGP = true;
-  repGP = window.setInterval(reportOnGamepad, 30);
-}
-
-const disconnected = () => {
-  hasGP = false;
-  window.clearInterval(repGP);
-}
-
-/**********************************/
-
 
 const createScene = () => {
   HEIGHT = window.innerHeight;
@@ -394,8 +379,8 @@ const loop = () => {
     openGate = false;
   }
 
-  if (fogGame.sound) {
-    scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.sound.level * 1.2), 700);
+  if (fogGame.level !== 0) {
+    //scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.level * 1.2), 700);
   }
 
   exampleUtils.run();

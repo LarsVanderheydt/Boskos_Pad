@@ -11,14 +11,19 @@ let leds = [0, 1, 2];
 let gameTimer = '';
 let complete = false;
 let timesFailed = 0;
+let r = 255, g = 255, b = 255;
 
-class GateGame {
-  constructor({first, second, third}, board, tiltPin) {
-    this.closeGate = false;
-    this.closed = false;
+class TrainGame {
+  constructor({first, second, third}, board, {joystick, rgb}) {
+    this.rgb = new five.Led.RGB({
+      pins: {
+        red: rgb.r,
+        green: rgb.g,
+        blue: rgb.b
+      }, board: board
+    });
+    this.joystick = new five.Joystick({pins: [joystick.x, joystick.y], board: board});
 
-    this.board = board;
-    this.tilt = new five.Button({pin: tiltPin, invert: true, board});
     this.buttons = [
       {
         button: new five.Button({pin: first.btn, board: board}),
@@ -42,6 +47,7 @@ class GateGame {
     this.buttons.forEach(btn => {
       // initialize buttons only once to avoid memory leaks
       btn.button.on('press', () => {
+        this.level = 0;
         timesFailed = 0;
         if (complete) return;
 
@@ -61,10 +67,26 @@ class GateGame {
   }
 
   powerUpReady() {
-    this.tilt.on("up", () => {
-      if (!this.closed && !this.closeGate) {
-        this.closeGate = true;
-      }
+    this.joystick.on('change', () => {
+      if (this.joystick.x >= 0.5) b -= 15;
+      if (this.joystick.x <= -0.5) g += 15;
+      if (this.joystick.y >= 0.5) b += 15;
+      if (this.joystick.y <= -0.5) g -= 15;
+
+      if (r <= 0) r = 0;
+      if (g <= 0) g = 0;
+      if (b <= 0) b = 0;
+
+      if (r >= 255) r = 255;
+      if (g >= 255) g = 255;
+      if (b >= 255) b = 255;
+    });
+
+
+    setInterval(() => {
+      console.log(r, g, b);
+
+      this.rgb.color(`rgb(${r}, ${g}, ${b})`);
     });
   }
 
@@ -338,4 +360,4 @@ class GateGame {
   }
 }
 
-module.exports = GateGame;
+module.exports = TrainGame;

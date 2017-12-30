@@ -10,15 +10,16 @@ const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 
 const Floor = require('./classes/Floor');
+const Flower = require('./classes/Objects/Flower');
 const Water = require('./classes/Water');
 const Road = require('./classes/Road');
 const Sky = require('./classes/Sky');
 const Cloud = require('./classes/Cloud');
+const Tracks = require('./classes/Tracks');
 
 const Car = require('./classes/Objects/Car');
 const Train = require('./classes/Objects/Train');
 const Tree = require('./classes/Objects/Tree');
-const Flower = require('./classes/Objects/Flower');
 const Blimp = require('./classes/Objects/Blimp');
 const Plane = require('./classes/Objects/Plane');
 const Kayak = require('./classes/Objects/Kayak');
@@ -63,7 +64,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier;
+let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier;
 let world;
 // let controls, scene, camera, box, spline, counter = 0;
 
@@ -86,9 +87,6 @@ const init = () => {
   createLight();
   //controls = new THREE.TrackballControls(camera);
 
-  train = new Train();
-  //console.log(train.mesh.position.x);
-
   car = new Car();
 
   sky = new Sky();
@@ -104,20 +102,18 @@ const init = () => {
   });
   scene.add(trees);
 
-  const flowers = new THREE.Object3D();
-  flowers.name = "flowers group";
+  tracks = new Tracks();
+  scene.add(tracks.mesh);
 
-  for (let i = 0; i < 35; i++) {
-    flower = new Flower();
-    flower.mesh.name = 'flower';
-    flower.mesh.scale.set(0.04, 0.04, 0.04);
-    flower.mesh.rotation.x = 1.5;
-    flowers.add(flower.mesh);
-  }
-  flowers.position.z = -45;
-  flowers.position.x = -15;
-  flowers.rotation.y = 0.8;
-  scene.add(flowers);
+  train = new Train();
+  train.mesh.position.x = 43;
+  train.mesh.position.z = -90;
+  scene.add(train.mesh);
+
+  const startTrainAfter = 80000 * 4;
+  setInterval(() => {
+    train.pause = false;
+  }, startTrainAfter);
 
 
   blimp = new Blimp();
@@ -194,17 +190,37 @@ const init = () => {
     });
   });
 
+  const flowers = new THREE.Object3D();
+  flowers.name = "flowers group";
+
+  for (let i = 0; i < 55; i++) {
+    flower = new Flower();
+    flower.mesh.name = 'flower';
+    flower.mesh.scale.set(0.04, 0.04, 0.04);
+    flower.mesh.rotation.x = 1.5;
+    flowers.add(flower.mesh);
+  }
+  scene.add(flowers);
+
   floor = new Floor();
   water = new Water();
-  // water.mesh.position.y = 4;
-
-  // add the mesh of the water to the scene
-  // scene.add(water.mesh);
-
   road = new Road(-7.5, -35.6);
 
   loop();
 }
+
+// if (canGame() === true) {
+//   window.addEventListener(`gamepadconnected`, connected());
+//   window.addEventListener(`gamepaddisconnected`, disconnected());
+//
+//   const checkGP = window.setInterval(() => {
+//     if (navigator.getGamepads()[0]) {
+//       if(!hasGP) connected();
+//     } else {
+//       disconnected();
+//     }
+//   }, 500);
+// }
 
 const handleJoystick = ({right, up, down}) => {
   const dir = {
@@ -344,7 +360,9 @@ const createLight = () => {
 const loop = () => {
   car.arrowControl();
 
-  train.moveBox();
+  setTimeout(() => {
+    train.move();
+  }, 60000);
   // cloud.float();
   sky.float();
   kayak.wiggle();

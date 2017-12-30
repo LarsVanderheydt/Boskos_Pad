@@ -3,7 +3,7 @@ const Colors = require('../objects/Colors');
 class Water {
   constructor() {
     const mat = new THREE.MeshPhongMaterial({
-      color: 0x00aeff,
+      color: 0x33a4c3,
       emissive: 0x0023b9,
       shininess: 60,
       specular: 30,
@@ -13,9 +13,10 @@ class Water {
     const w = exampleUtils.createPlane(1, 10, 80, 0, mat);
     w.receiveShadow = true;
     w.name = 'Water';
+    w.position.y = 1;
 
     w.goblin.position.x = 120;
-    // w.goblin.position.z = -5;
+    w.goblin.position.y = 0.4;
 
     w.castShadow = true;
     w.receiveShadow = true;

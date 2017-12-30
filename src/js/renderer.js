@@ -26,6 +26,7 @@ const Kayak = require('./classes/Objects/Kayak');
 const House1 = require('./classes/Objects/House1');
 const Chalet = require('./classes/Objects/Chalet');
 const Gate = require('./classes/Objects/Gate');
+const Barrier = require('./classes/Objects/Barrier');
 
 // saboteur games
 /*
@@ -63,12 +64,13 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate;
+let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier;
 let world;
 // let controls, scene, camera, box, spline, counter = 0;
 
 let fogGame = "";
 let gateGame = "";
+let trainGame = "";
 let openGate = false;
 
 let joystick = {};
@@ -147,30 +149,33 @@ const init = () => {
   gate = new Gate(86.18, -24.10, 89.50);
   scene.add(gate.mesh);
 
+  barrier = new Barrier(31, 2, -31);
+  scene.add(barrier.mesh);
+
   boards.on("ready", () => {
     boards.each(board => {
-      if (board.id === 'B') {
+      if (board.id === 'A') {
 
-        // sound sensor game
-        fogGame = new FogGame({
-          first: { btn: 8, led: 11 },
-          second: { btn: 9, led: 12 },
-          third: { btn: 10, led: 13 }
-        }, board, "A0");
+        // tilt switch game
+        gateGame = new GateGame({
+          first: { btn: 8, led: 9 },
+          second: { btn: 10, led: 11 },
+          third: { btn: 12, led: 13 }
+        }, board, 4);
+
+        new five.Button({pin: 8, board}).on('press', () => {
+          openGate = true;
+        });
 
       }
-      if (board.id === 'A') {
-        // tilt switch game
-        // gateGame = new GateGame({
-        //   first: { btn: 8, led: 11 },
-        //   second: { btn: 9, led: 12 },
-        //   third: { btn: 10, led: 13 }
-        // }, board, 4);
-        //
-        // new five.Button({pin: 8, board}).on('press', () => {
-        //   openGate = true;
-        // });
-        //
+
+      if (board.id === 'B') {
+        // sound sensor game
+        fogGame = new FogGame({
+          first: { btn: 7, led: 4 },
+          second: { btn: 17, led: 2 },
+          third: { btn: 18, led: 19 }
+        }, board, "A2");
 
         trainGame = new TrainGame({
           first: { btn: 8, led: 11 },
@@ -380,7 +385,13 @@ const loop = () => {
   }
 
   if (fogGame.level !== 0) {
-    //scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.level * 1.2), 700);
+    scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.level * 1.2), 700);
+  } else {
+    scene.fog = new THREE.Fog(0xf7d9aa, 1000, 10000);
+  }
+
+  if (trainGame.complete) {
+    barrier.close();
   }
 
   exampleUtils.run();

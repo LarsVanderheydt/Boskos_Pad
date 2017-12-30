@@ -15,6 +15,8 @@ let r = 255, g = 255, b = 255;
 
 class TrainGame {
   constructor({first, second, third}, board, {joystick, rgb}) {
+    this.complete = false;
+
     this.rgb = new five.Led.RGB({
       pins: {
         red: rgb.r,
@@ -82,9 +84,10 @@ class TrainGame {
       if (b >= 255) b = 255;
     });
 
-
     setInterval(() => {
-      console.log(r, g, b);
+      if (r === 255 && g === 0 && b === 0) {
+        this.complete = true;
+      }
 
       this.rgb.color(`rgb(${r}, ${g}, ${b})`);
     });
@@ -106,7 +109,6 @@ class TrainGame {
       this.startGame();
       clearTimeout(blinkTimer);
     }
-
   }
 
   // reset all animations and leds
@@ -121,6 +123,8 @@ class TrainGame {
     // reset game for the saboteur
     leds = [0, 1, 2];
     up = true;
+    g = 255;
+    b = 255;
   }
 
   initSequences() {

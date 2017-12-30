@@ -14,7 +14,7 @@ let timesFailed = 0;
 
 class FogGame {
   constructor({first, second, third}, board, soundLvlPin) {
-    this.level = 10;
+    this.level = 0;
     this.sensor = new five.Sensor({pin: soundLvlPin, board: board});
 
     this.buttons = [
@@ -68,7 +68,7 @@ class FogGame {
       const constr = this.sensor.scaleTo(0, 100);
       // if (this.level <= 0) this.level = 1;
 
-      if (constr >= 10) this.level -= 0.01;
+      if (constr >= 8) this.level -= 0.01;
     });
   }
 

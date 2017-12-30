@@ -3,7 +3,7 @@ const Colors = require('../objects/Colors');
 class Water {
   constructor() {
     const mat = new THREE.MeshPhongMaterial({
-      color: 0x00aeff,
+      color: 0x33a4c3,
       emissive: 0x0023b9,
       shininess: 60,
       specular: 30,

@@ -105,7 +105,7 @@ const init = () => {
   train.mesh.position.z = -90;
   scene.add(train.mesh);
 
-  const startTrainAfter = 60000 * 4;
+  const startTrainAfter = 80000 * 4;
   setInterval(() => {
     train.pause = false;
   }, startTrainAfter);
@@ -370,7 +370,9 @@ const createLight = () => {
 const loop = () => {
   car.arrowControl();
 
-  train.move();
+  setTimeout(() => {
+    train.move();
+  }, 60000);
   // cloud.float();
   sky.float();
   kayak.wiggle();

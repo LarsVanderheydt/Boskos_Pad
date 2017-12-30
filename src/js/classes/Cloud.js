@@ -10,9 +10,8 @@ class Cloud {
     const geom = new THREE.SphereGeometry(4, 10, 10);
 
     // create a material; a simple white material will do the trick
-    // const mat = new THREE.MeshPhongMaterial({color: Colors.white, transparent: true, opacity: 0.6});
-    const mat = new THREE.MeshPhongMaterial({color: Colors.white});
-    
+    const mat = new THREE.MeshPhongMaterial({color: Colors.white, transparent: true, opacity: 0.6});
+    //const mat = new THREE.MeshPhongMaterial({color: Colors.white});
 
     // duplicate the geometry a random number of times
     const nBlocs = 3 + Math.floor(Math.random() * 3);
@@ -40,11 +39,6 @@ class Cloud {
       this.mesh.add(m);
     }
   }
-
-  // float(object) {
-  //    this.mesh.position.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.05;
-  //   requestAnimationFrame(() => this.wiggle(object));
-  // }
 }
 
 module.exports = Cloud;

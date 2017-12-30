@@ -37,7 +37,7 @@ const Barrier = require('./classes/Objects/Barrier');
 const FogGame = require('./classes/SaboteurGames/FogGame');
 const GateGame = require('./classes/SaboteurGames/GateGame');
 const TrainGame = require('./classes/SaboteurGames/TrainGame');
-
+const NightTimeGame = require('./classes/SaboteurGames/NightTimeGame');
 // get all coordinates from all duplicate objects like trees, ...
 const coordsTree = require('../assets/coords_tree.json');
 const coordsFlower = require('../assets/coords_flower.json');
@@ -71,6 +71,7 @@ let world;
 let fogGame = "";
 let gateGame = "";
 let trainGame = "";
+let nightTimeGame = "";
 let openGate = false;
 
 let joystick = {};
@@ -157,14 +158,21 @@ const init = () => {
       if (board.id === 'A') {
 
         // tilt switch game
-        gateGame = new GateGame({
+        // gateGame = new GateGame({
+        //   first: { btn: 8, led: 9 },
+        //   second: { btn: 10, led: 11 },
+        //   third: { btn: 12, led: 13 }
+        // }, board, 4);
+
+        nightTimeGame = new NightTimeGame({
           first: { btn: 8, led: 9 },
           second: { btn: 10, led: 11 },
-          third: { btn: 12, led: 13 }
-        }, board, 4);
+          third: { btn: 12, led: 13 },
+        }, board, "A0");
 
-        new five.Button({pin: 8, board}).on('press', () => {
-          openGate = true;
+        new five.Button({pin: 8, board}).on("press", () => {
+          nightTimeGame.goDark = false;
+          light();
         });
 
       }
@@ -209,18 +217,24 @@ const init = () => {
   loop();
 }
 
-// if (canGame() === true) {
-//   window.addEventListener(`gamepadconnected`, connected());
-//   window.addEventListener(`gamepaddisconnected`, disconnected());
-//
-//   const checkGP = window.setInterval(() => {
-//     if (navigator.getGamepads()[0]) {
-//       if(!hasGP) connected();
-//     } else {
-//       disconnected();
-//     }
-//   }, 500);
-// }
+const dark = () => {
+  if (nightTimeGame.goDark) {
+    if (hemisphereLight.intensity >= -0.9) {
+      console.log('dark');
+      hemisphereLight.intensity -= 0.01;
+    }
+  }
+}
+
+const light = () => {
+  if (!nightTimeGame.goDark) {
+    if (hemisphereLight.intensity <= 0.9) {
+      console.log('light');
+      hemisphereLight.intensity += 0.01;
+    }
+  }
+  requestAnimationFrame(light);
+}
 
 const handleJoystick = ({right, up, down}) => {
   const dir = {
@@ -390,9 +404,9 @@ const loop = () => {
     scene.fog = new THREE.Fog(0xf7d9aa, 1000, 10000);
   }
 
-  if (trainGame.complete) {
-    barrier.close();
-  }
+  if (trainGame.complete) barrier.close();
+
+  if (nightTimeGame.goDark === true) dark();
 
   exampleUtils.run();
   renderer.render(scene, camera);

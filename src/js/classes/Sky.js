@@ -44,11 +44,18 @@ class Sky {
     }
   }
   float(object) {
-    this.mesh.position.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.5;
-    this.mesh.position.z = Math.cos(Date.now() * 0.0009) * Math.PI * 0.2;
+  if (this.mesh.position.z <= 120) {
+
+    this.mesh.position.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.2;
+
+    this.mesh.position.z += 0.02 * Math.PI * 0.2;
+    console.log(this.mesh.position.z);
+  }else{
+    this.mesh.position.z = -150;
+  }
 
 
-    //requestAnimationFrame(() => this.wiggle(object));
+    //requestAnimationFrame(() => this.wiggle(object));+= this.speed * Math.sin(this.angle);
   }
 }
 module.exports = Sky;

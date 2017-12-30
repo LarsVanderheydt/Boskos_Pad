@@ -150,7 +150,13 @@ const init = () => {
   gate = new Gate(86.18, -24.10, 89.50);
   scene.add(gate.mesh);
 
+  gate = new Gate(101.18, 14.10, 89.50);
+  scene.add(gate.mesh);
+
   barrier = new Barrier(31, 2, -31);
+  scene.add(barrier.mesh);
+
+  barrier = new Barrier(23, 2, 34);
   scene.add(barrier.mesh);
 
   boards.on("ready", () => {

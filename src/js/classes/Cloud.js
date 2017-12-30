@@ -10,7 +10,9 @@ class Cloud {
     const geom = new THREE.SphereGeometry(4, 10, 10);
 
     // create a material; a simple white material will do the trick
-    const mat = new THREE.MeshPhongMaterial({color: Colors.white, transparent: true, opacity: 0.6});
+    // const mat = new THREE.MeshPhongMaterial({color: Colors.white, transparent: true, opacity: 0.6});
+    const mat = new THREE.MeshPhongMaterial({color: Colors.white});
+    
 
     // duplicate the geometry a random number of times
     const nBlocs = 3 + Math.floor(Math.random() * 3);
@@ -32,7 +34,7 @@ class Cloud {
 
       // allow each cube to cast and to receive shadows
       m.castShadow = false;
-      m.receiveShadow = true;
+      m.receiveShadow = false;
 
       // add the cube to the container we first created
       this.mesh.add(m);

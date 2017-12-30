@@ -1,61 +1,52 @@
-let box,
-  spline,
-  counter = 0;
-
-let tangent = new THREE.Vector3();
-const axis = new THREE.Vector3();
-const up = new THREE.Vector3(0, 1, 0);
+const stopTrainAt = 100;
 
 class Train {
   constructor() {
-    //controls = new THREE.TrackballControls(camera, render.domElement);
+    this.mesh = new THREE.Object3D();
+    this.speed = 0.3;
+    this.angle = -7 * (Math.PI / 180);
+    this.pause = false;
 
-    let numPoints = 50;
+    const texture = new THREE.TextureLoader().load('./js/models/train/Train_Texture.png');
+    const material = new THREE.MeshBasicMaterial({map: texture});
+    const loader = new THREE.OBJLoader();
 
-    spline = new THREE.CatmullRomCurve3([
-      new THREE.Vector3(0, 0, 0),
-      new THREE.Vector3(0, 200, 0),
-      new THREE.Vector3(150, 150, 0),
-      new THREE.Vector3(150, 50, 0),
-      new THREE.Vector3(250, 100, 0),
-      new THREE.Vector3(250, 300, 0)
-    ]);
+    loader.load('./js/models/train/Train.obj', object => {
+      object.scale.set(0.1, 0.1, 0.1);
 
-    let material = new THREE.LineBasicMaterial({color: 0xff00f0});
+      object.children.forEach(obj => {
+        obj.castShadow = true;
+        obj.receiveShadow = true;
+      });
 
-    let geometry = new THREE.Geometry();
-    let splinePoints = spline.getPoints(numPoints);
+      object.castShadow = true;
+      object.receiveShadow = true;
 
-    for (let i = 0; i < splinePoints.length; i++) {
-      geometry.vertices.push(splinePoints[i]);
-    }
+      object.rotation.y = this.angle + (Math.PI / 180);
+      object.position.y = 1;
 
-    let line = new THREE.Line(geometry, material);
-    //this.add(line);
+      object.traverse(child => {
+        if (child instanceof THREE.Mesh) {
+          child.material = material;
+        }
+      });
 
-    geometry = new THREE.BoxGeometry(5, 40, 4);
-    material = new THREE.MeshBasicMaterial({color: 0xff0000});
-
-    box = new THREE.Mesh(geometry, material);
-    //this.add(box);
-
+      this.mesh.add(object);
+    });
   }
-  moveBox() {
-    if (counter <= 1) {
-      box.position.copy(spline.getPointAt(counter));
 
-      tangent = spline.getTangentAt(counter).normalize();
-
-      axis.crossVectors(up, tangent).normalize();
-
-      let radians = Math.acos(up.dot(tangent));
-
-      box.quaternion.setFromAxisAngle(axis, radians);
-
-      counter += 0.005
-    } else {
-      counter = 0;
+  move() {
+    if (!this.pause) {
+      if (this.mesh.position.z >= stopTrainAt) {
+        this.pause = true;
+        this.mesh.position.x = 43;
+        this.mesh.position.z = -90;
+      } else {
+        this.mesh.position.z += this.speed * Math.cos(this.angle);
+        this.mesh.position.x += this.speed * Math.sin(this.angle);
+      }
     }
   }
 }
+
 module.exports = Train;

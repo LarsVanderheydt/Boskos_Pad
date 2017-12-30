@@ -39,9 +39,9 @@ class Flower {
 	petalCore.position.z = 3;
 	this.mesh.add(petalCore);
 
-  this.mesh.position.x = Math.floor((Math.random() * 50) - 10);
-  this.mesh.position.z = Math.floor((Math.random() * 25) + 1);
-  this.mesh.position.y = 1;
+  this.mesh.position.x = Math.floor((Math.random() * 230) - 30);
+  this.mesh.position.z = Math.floor((Math.random() * 150) - 80);
+  this.mesh.position.y = 0.2;
 
 }
   }

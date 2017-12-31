@@ -49,7 +49,6 @@ class Sky {
     this.mesh.position.x = Math.sin(Date.now() * 0.001) * Math.PI * 0.2;
 
     this.mesh.position.z += 0.02 * Math.PI * 0.2;
-    // console.log(this.mesh.position.z);
   }else{
     this.mesh.position.z = -150;
   }

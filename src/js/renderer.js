@@ -9,6 +9,11 @@
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 
+const BeginScreen = require('./classes/BeginScreen');
+const DuringScreen = require('./classes/DuringScreen');
+const EndScreen = require('./classes/EndScreen');
+const CameraObject = require('./classes/Objects/CameraObject')
+
 const Floor = require('./classes/Floor');
 const Flower = require('./classes/Objects/Flower');
 const Water = require('./classes/Water');
@@ -42,7 +47,6 @@ const DriverGame = require('./classes/DriverGame');
 
 // get all coordinates from all duplicate objects like trees, ...
 const coordsTree = require('../assets/coords_tree.json');
-const coordsFlower = require('../assets/coords_flower.json');
 
 const boards = new five.Boards(["B", "A"]);
 
@@ -66,7 +70,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier1, barrier2;
+let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier1, barrier2, cameraObject;
 let world;
 // let controls, scene, camera, box, spline, counter = 0;
 
@@ -89,7 +93,20 @@ const init = () => {
 
   // light
   createLight();
-  //controls = new THREE.TrackballControls(camera);
+
+  // BEGIN STATE
+  //beginscreen = new BeginScreen();
+  //
+
+  // SECOND STATE
+  //duringscreen = new DuringScreen();
+  //
+
+  // END STATE
+  //endscreen = new EndScreen();
+  //
+
+  //cameraObject = new CameraObject();
 
   car = new Car();
 

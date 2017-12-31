@@ -11,29 +11,29 @@ let leds = [0, 1, 2];
 let gameTimer = '';
 let complete = false;
 let timesFailed = 0;
+let didReset = false;
+let powerUpReady = false;
 
 class FogGame {
   constructor({first, second, third}, board, soundLvlPin) {
     this.level = 0;
+    this.noFog = true;
+
     this.sensor = new five.Sensor({pin: soundLvlPin, board: board});
 
-    this.buttons = [
-      {
+    this.buttons = [{
         button: new five.Button({pin: first.btn, board: board}),
         led: new five.Led({pin: first.led, board: board}),
         id: 0
-      },
-      {
+      }, {
         button: new five.Button({pin: second.btn, board: board}),
         led: new five.Led({pin: second.led, board: board}),
         id: 1
-      },
-      {
+      }, {
         button: new five.Button({pin: third.btn, board: board}),
         led: new five.Led({pin: third.led, board: board}),
         id: 2
-      }
-    ];
+      }];
 
     this.initSequences();
 
@@ -60,16 +60,21 @@ class FogGame {
   }
 
   powerUpReady() {
-    this.level = 1;
+    if (powerUpReady) {
+      this.level = 1;
+      this.noFog = false;
 
-    new five.Led(13).on();
+      this.sensor.on("change", () => {
+        const constr = this.sensor.scaleTo(0, 100);
+        // if (this.level <= 0) this.level = 1;
 
-    this.sensor.on("change", () => {
-      const constr = this.sensor.scaleTo(0, 100);
-      // if (this.level <= 0) this.level = 1;
-
-      if (constr >= 8) this.level -= 0.01;
-    });
+        if (constr >= 8) {
+          this.level -= 0.01;
+        } else {
+          powerUpReady = false;
+        }
+      });
+    }
   }
 
   // blink for 2 seconds, then give a button to push on
@@ -103,6 +108,23 @@ class FogGame {
     // reset game for the saboteur
     leds = [0, 1, 2];
     up = true;
+  }
+
+  fullReset() {
+    if (!didReset) {
+      didReset = true;
+      walkTimer, sequenceTimer, countdownTimer, blinkTimer = '';
+      blink = true;
+      up = true;
+      gameStarted = false;
+      random, index, push, i = 0;
+      leds = [0, 1, 2];
+      gameTimer = '';
+      complete = false;
+      timesFailed = 0;
+      this.level = 0;
+      this.initSequences();
+    }
   }
 
   initSequences() {
@@ -177,6 +199,7 @@ class FogGame {
 
     setTimeout(() => {
       this.reset();
+      powerUpReady = true;
       this.powerUpReady();
     }, 3000);
   }

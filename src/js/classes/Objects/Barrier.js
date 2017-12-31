@@ -38,7 +38,7 @@ class Barrier {
     this.barrierBox.goblin.position.y = 4;
     this.barrierBox.goblin.linear_velocity.y = -2;
 
-    this.barrierBox.goblin.position.x = x;
+    this.barrierBox.goblin.position.x = x + 1;
     this.barrierBox.goblin.position.y = y;
     this.barrierBox.goblin.position.z = z + 5;
 

@@ -1,13 +1,10 @@
-const Colors = require('../objects/Colors');
-let t;
-const tracks = {};
-let boardXpos = 0.6;
+const Colors = require('../../objects/Colors');
 
 class Tracks {
   constructor() {
 
     let tracksGeometry = new THREE.BoxGeometry(180, 0.1 ,0.5, 1, 1);
-    let tracksMaterial = new THREE.MeshStandardMaterial({color: 0x8a8a8a});
+    let tracksMaterial = new THREE.MeshStandardMaterial({color: Colors.grey});
     tracksMaterial.flatShading = true;
 
     const tracksOne = new THREE.Mesh(tracksGeometry, tracksMaterial);
@@ -25,7 +22,7 @@ class Tracks {
     tracksTwo.rotation.y = 1.45;
 
     const tracksBoardGeometry = new THREE.BoxGeometry(4, 0.6, 0.8,1,1,1);
-    const boardMaterial = new THREE.MeshStandardMaterial({color: 0x886633});
+    const boardMaterial = new THREE.MeshStandardMaterial({color: Colors.lightbrown});
     boardMaterial.flatShading = true;
 
     this.mesh = new THREE.Object3D();
@@ -38,15 +35,13 @@ class Tracks {
       this.mesh.add(tracksBoard);
     }
 
-    //this.mesh = new THREE.Object3D();
-    //this.mesh.add(tracksBoard.mesh);
     this.mesh.add(tracksOne);
     this.mesh.add(tracksTwo);
     this.mesh.position.x = 30;
     this.mesh.position.z = 0;
     this.mesh.position.y = 0;
 
-    //this.t.name = 'Tracks'
+    this.mesh.name = 'Tracks'
     scene.add(this.mesh);
   }
 }

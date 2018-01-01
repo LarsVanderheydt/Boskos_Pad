@@ -1,5 +1,3 @@
-const scale = 0.6;
-
 class Chalet {
   constructor() {
     this.mesh = new THREE.Object3D();
@@ -10,12 +8,10 @@ class Chalet {
     const loader = new THREE.OBJLoader();
 
     loader.load('./js/models/chalet/Chalet.obj', object => {
-      object.scale.set(scale, scale, scale);
 
+      object.scale.set(0.6, 0.6, 0.6);
       object.position.x = 160;
-      //object.position.y = 3.2;
       object.position.z = -3.5;
-
       object.rotation.y = 0;
 
       object.children.forEach(obj => {

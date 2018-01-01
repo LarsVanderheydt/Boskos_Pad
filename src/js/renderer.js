@@ -6,22 +6,23 @@
     Wit: Down
     Zwart: Gnd
 */
+
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 const Timer = require('./classes/Timer');
 
-const BeginScreen = require('./classes/BeginScreen');
-const DuringScreen = require('./classes/DuringScreen');
-const EndScreen = require('./classes/EndScreen');
+const BeginScreen = require('./classes/ScreenState/BeginScreen');
+const DuringScreen = require('./classes/ScreenState/DuringScreen');
+const EndScreen = require('./classes/ScreenState/EndScreen');
 const CameraObject = require('./classes/Objects/CameraObject')
 
-const Floor = require('./classes/Floor');
-const Flower = require('./classes/Objects/Flower');
-const Water = require('./classes/Water');
-const Road = require('./classes/Road');
-const Sky = require('./classes/Sky');
-const Cloud = require('./classes/Cloud');
-const Tracks = require('./classes/Tracks');
+const Floor = require('./classes/SceneFloor/Floor');
+const Water = require('./classes/SceneFloor/Water');
+const Road = require('./classes/SceneFloor/Road');
+const Sky = require('./classes/SceneFloor/Sky');
+const Cloud = require('./classes/SceneFloor/Cloud');
+const Tracks = require('./classes/SceneFloor/Tracks');
+const Flower = require('./classes/SceneFloor/Flower');
 
 const Car = require('./classes/Objects/Car');
 const Train = require('./classes/Objects/Train');
@@ -29,7 +30,7 @@ const Tree = require('./classes/Objects/Tree');
 const Blimp = require('./classes/Objects/Blimp');
 const Plane = require('./classes/Objects/Plane');
 const Kayak = require('./classes/Objects/Kayak');
-const House1 = require('./classes/Objects/House1');
+const House1 = require('./classes/Objects/House');
 const Chalet = require('./classes/Objects/Chalet');
 const Gate = require('./classes/Objects/Gate');
 const Barrier = require('./classes/Objects/Barrier');
@@ -89,30 +90,32 @@ let mousePos = {x: 0, y: 0};
 
 const init = () => {
   exampleUtils.initialize();
-
-  // camera & render
   createScene();
-
-  // light
   createLight();
 
   // BEGIN STATE
   //beginscreen = new BeginScreen();
+  //beginscreen.name = "Beginscreentext";
   //
 
   // SECOND STATE
   //duringscreen = new DuringScreen();
+  //duringscreen.name = "Duringscreentext";
+
   //
 
   // END STATE
   //endscreen = new EndScreen();
+  //endscreen.name = "Beginscreentext";
   //
 
   //cameraObject = new CameraObject();
 
   car = new Car();
+  car.name = "Car";
 
   sky = new Sky();
+  sky.mesh.name = "sky";
   sky.mesh.position.y = 30;
   scene.add(sky.mesh);
 
@@ -129,6 +132,7 @@ const init = () => {
   scene.add(tracks.mesh);
 
   train = new Train();
+  train.mesh.name = "Train";
   train.mesh.position.x = 43;
   train.mesh.position.z = -90;
   scene.add(train.mesh);
@@ -138,16 +142,15 @@ const init = () => {
     train.pause = false;
   }, startTrainAfter);
 
-
   blimp = new Blimp();
   blimp.mesh.position.x = 160;
   blimp.mesh.position.z = 150;
   scene.add(blimp.mesh);
 
   plane = new Plane();
+  plane.mesh.name = "sky";
   plane.mesh.position.x = -20;
   plane.mesh.position.z = -90;
-
   scene.add(plane.mesh);
 
   // start plane again after 3 min (when stopped)
@@ -160,7 +163,6 @@ const init = () => {
   kayak.mesh.position.x = 120;
   kayak.mesh.position.y = -39;
   kayak.mesh.position.z = -10;
-
   scene.add(kayak.mesh);
 
   house1 = new House1();
@@ -242,7 +244,6 @@ const init = () => {
 
   const flowers = new THREE.Object3D();
   flowers.name = "flowers group";
-
   for (let i = 0; i < 55; i++) {
     flower = new Flower();
     flower.mesh.name = 'flower';
@@ -340,11 +341,9 @@ const createScene = () => {
   HEIGHT = window.innerHeight;
   WIDTH = window.innerWidth;
 
-  // create scene
   scene = new THREE.Scene();
   scene.name = 'Scene';
 
-  // create camera
   aspectRatio = WIDTH / HEIGHT;
   fieldOfView = 10;
   nearPlane = 1;
@@ -358,19 +357,15 @@ const createScene = () => {
   camera.position.x = 80;
   camera.rotation.x = -80 * Math.PI / 180;
 
-  // create renderer
   renderer = new THREE.WebGLRenderer({
     alpha: true,
     antialias: true
   });
 
-  // set size of renderer
   renderer.setSize(WIDTH, HEIGHT);
 
   // options are THREE.BasicShadowMap | THREE.PCFShadowMap | THREE.PCFSoftShadowMap
   renderer.shadowMap.Type = THREE.PCFShadowMap;
-
-  // shadow rendering
   renderer.shadowMap.enabled = true;
 
   container = document.querySelector('.world');
@@ -388,25 +383,16 @@ const handleWindowResize = () => {
 }
 
 const createLight = () => {
-  // A hemisphere light is a gradient colored light;
-  // the first parameter is the sky color, the second parameter is the ground color,
-  // the third parameter is the intensity of the light
-  hemisphereLight = new THREE.HemisphereLight(0xaaaaaa,0x000000, .9);
+  hemisphereLight = new THREE.HemisphereLight(Colors.grey ,Colors.black, .9);
   hemisphereLight.name = 'hemisphere Light';
 
-  ambientLight = new THREE.AmbientLight(0xdc8874, .5);
+  ambientLight = new THREE.AmbientLight(Colors.ambient, .5);
   ambientLight.name = 'Ambient Light';
-  // A directional light shines from a specific direction.
-  // It acts like the sun, that means that all the rays produced are parallel.
-  shadowLight = new THREE.DirectionalLight(0xffffff, .9);
+
+  shadowLight = new THREE.DirectionalLight(Colors.white, .9);
   shadowLight.name = 'Shadow Light';
-  // direction of light
   shadowLight.position.set(120, 400, 280);
-
-  // allow shadow casting
   shadowLight.castShadow = true;
-
-  // define the visible area of the projected shadow
   shadowLight.shadow.camera.left = -400;
   shadowLight.shadow.camera.right = 400;
   shadowLight.shadow.camera.top = 400;
@@ -435,13 +421,12 @@ let turnLightOn = false;
 
 const loop = () => {
   car.arrowControl();
+  sky.float();
+  kayak.wiggle();
 
   setTimeout(() => {
     train.move();
   }, 60000);
-  // cloud.float();
-  sky.float();
-  kayak.wiggle();
 
   setTimeout(() => {
     blimp.fly();

@@ -1,5 +1,4 @@
 const stopBlimpAt = -10;
-const scale = 1.5;
 
 class Blimp {
   constructor() {
@@ -9,12 +8,12 @@ class Blimp {
     this.angle = -160 * (Math.PI / 180);
     this.pause = false;
 
-    const texture = new THREE.TextureLoader().load('./js/models/blimp/Blimp_BaseColor.png');
+    const texture = new THREE.TextureLoader().load('./js/models/blimp/Blimp_Texture.png');
     const material = new THREE.MeshBasicMaterial({map: texture});
     const loader = new THREE.OBJLoader();
 
     loader.load('./js/models/blimp/Blimp.obj', object => {
-      object.scale.set(scale, scale, scale);
+      object.scale.set(1.5, 1.5, 1.5);
 
       object.children.forEach(obj => {
         obj.castShadow = true;

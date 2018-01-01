@@ -1,4 +1,5 @@
 const Colors = require('../../objects/Colors');
+
 class Barrier {
   constructor(x, y, z) {
     this.mesh = new THREE.Object3D();
@@ -29,11 +30,9 @@ class Barrier {
     this.mesh.add(this.bar);
     this.mesh.add(foot);
 
-    const mat = new THREE.MeshPhongMaterial({
-      color: Colors.red
-    });
+    const mat = new THREE.MeshPhongMaterial({color: Colors.red});
 
-    this.barrierBox = exampleUtils.createBox( 2, 2, 3, 0, mat );
+    this.barrierBox = exampleUtils.createBox( 2, 2, 3, 0, mat);
 
     this.barrierBox.goblin.position.y = 4;
     this.barrierBox.goblin.linear_velocity.y = -2;

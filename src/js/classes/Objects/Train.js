@@ -30,7 +30,6 @@ class Train {
           child.material = material;
         }
       });
-
       this.mesh.add(object);
     });
   }

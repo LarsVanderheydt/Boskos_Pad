@@ -1,16 +1,14 @@
-const scale = 5;
-
-class House1 {
+class House {
   constructor() {
     this.mesh = new THREE.Object3D();
-    this.mesh.name = "House1";
+    this.mesh.name = "House";
 
-    const texture = new THREE.TextureLoader().load('./js/models/house1/house1_texture.png');
+    const texture = new THREE.TextureLoader().load('./js/models/house/House_Texture.png');
     const material = new THREE.MeshBasicMaterial({map: texture});
     const loader = new THREE.OBJLoader();
 
-    loader.load('./js/models/house1/house1.obj', object => {
-      object.scale.set(scale, scale, scale);
+    loader.load('./js/models/house/House.obj', object => {
+      object.scale.set(5, 5, 5);
 
       object.position.x = -1;
       object.position.y = 3.2;
@@ -31,10 +29,9 @@ class House1 {
           child.material = material;
         }
       });
-
       this.mesh.add(object);
     });
   }
 }
 
-module.exports = House1;
+module.exports = House;

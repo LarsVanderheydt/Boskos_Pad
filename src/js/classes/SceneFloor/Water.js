@@ -1,13 +1,14 @@
-const Colors = require('../objects/Colors');
+const Colors = require('../../objects/Colors');
 
 class Water {
   constructor() {
     const mat = new THREE.MeshPhongMaterial({
-      color: 0x33a4c3,
-      emissive: 0x0023b9,
-      shininess: 60,
+      color: Colors.blue,
+      emissive: Colors.darkblue,
+      specular: Colors.white,
+      shininess: 100,
       specular: 30,
-      transparent: true
+      transparent: true,
     });
 
     const w = exampleUtils.createPlane(1, 10, 80, 0, mat);

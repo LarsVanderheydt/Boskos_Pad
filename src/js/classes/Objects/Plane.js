@@ -30,7 +30,6 @@ class Plane {
           child.material = material;
         }
       });
-
       this.mesh.add(object);
     });
   }

@@ -18,7 +18,7 @@ class Gate {
       color: Colors.red
     });
 
-    this.rightBox = exampleUtils.createBox( 2, 5, 2, 0, mat );
+    this.rightBox = exampleUtils.createBox( 2, 5, 2, 0, mat);
 
     this.rightBox.goblin.position.y = 4;
     this.rightBox.goblin.linear_velocity.y = -2;
@@ -32,7 +32,7 @@ class Gate {
     scene.add(this.rightBox);
 
 
-    this.leftBox = exampleUtils.createBox( 2, 5, 2, 0, mat );
+    this.leftBox = exampleUtils.createBox( 2, 5, 2, 0, mat);
 
     this.leftBox.goblin.position.y = 4;
     this.leftBox.goblin.linear_velocity.y = -2;

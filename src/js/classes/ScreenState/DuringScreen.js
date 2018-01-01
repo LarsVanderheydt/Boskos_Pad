@@ -1,4 +1,4 @@
-const Colors = require('../objects/Colors');
+const Colors = require('../../objects/Colors');
 
 class DuringScreen {
   constructor() {
@@ -7,7 +7,7 @@ class DuringScreen {
 
     loader.load('assets/fonts/Open_Sans_Regular.json', function(font) {
 
-      let TextMaterial = new THREE.MeshBasicMaterial({color: 0x0f1927, transparent: true, opacity: 0.5});
+      let TextMaterial = new THREE.MeshBasicMaterial({color: Colors.black, transparent: true, opacity: 0.5});
       let text = `SABOTEER`;
       let TextGeometry = new THREE.TextGeometry(text, {
         font: font,

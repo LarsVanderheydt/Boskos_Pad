@@ -1,4 +1,4 @@
-const Colors = require('../objects/Colors');
+const Colors = require('../../objects/Colors');
 
 class EndScreen {
   constructor() {
@@ -7,7 +7,7 @@ class EndScreen {
 
     loader.load('assets/fonts/Open_Sans_Regular.json', function(font) {
 
-      let TextMaterial = new THREE.MeshBasicMaterial({color: 0x0f1927});
+      let TextMaterial = new THREE.MeshBasicMaterial({color: Colors.black});
       let Title = "HOERA !";
       let TitleTextGeometry = new THREE.TextGeometry(Title, {
         font: font,

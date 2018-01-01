@@ -8,6 +8,7 @@
 */
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
+const Timer = require('./classes/Timer');
 
 const BeginScreen = require('./classes/BeginScreen');
 const DuringScreen = require('./classes/DuringScreen');
@@ -48,6 +49,7 @@ const DriverGame = require('./classes/DriverGame');
 // get all coordinates from all duplicate objects like trees, ...
 const coordsTree = require('../assets/coords_tree.json');
 
+const $timer = document.getElementById(`timer`);
 const boards = new five.Boards(["B", "A"]);
 
 let game;
@@ -179,6 +181,15 @@ const init = () => {
   barrier2 = new Barrier(23, 2, 34);
   scene.add(barrier2.mesh);
 
+
+
+
+
+
+
+
+
+
   boards.on("ready", () => {
     boards.each(board => {
       if (board.id === 'A') {
@@ -196,37 +207,38 @@ const init = () => {
           third: { btn: 12, led: 13 },
         }, board, "A0");
 
-        new five.Button({pin: 8, board}).on("press", () => {
-          // nightTimeGame.goDark = false;
-          // light();
-          fogGame.level = 0;
-        });
-
-        handleJoystick({right: 18, up: 17, down: 19}, board);
 
         driverGame = new DriverGame([3, 4], [2, 5], board);
+        handleJoystick({right: 18, up: 17, down: 19}, board);
       }
 
       if (board.id === 'B') {
         // sound sensor game
         fogGame = new FogGame({
-          first: { btn: 7, led: 4 },
-          second: { btn: 17, led: 2 },
-          third: { btn: 18, led: 19 }
-        }, board, "A2");
+          first: { btn: 9, led: 8 },
+          second: { btn: 11, led: 10 },
+          third: { btn: 13, led: 12 }
+        }, board, "A3");
 
         trainGame = new TrainGame({
-          first: { btn: 8, led: 11 },
-          second: { btn: 9, led: 12 },
-          third: { btn: 10, led: 13 }
+          first: { btn: 7, led: 6 },
+          second: { btn: 5, led: 4 },
+          third: { btn: 3, led: 2 }
         }, board, {
-          joystick: {x: "A0", y: "A1"},
-          rgb: {r: 3, g: 5, b: 6}
+          joystick: {x: "A5", y: "A4"},
+          rgb: {r: 14, g: 15, b: 16}
         });
 
       }
     });
   });
+
+
+
+
+
+
+
 
   const flowers = new THREE.Object3D();
   flowers.name = "flowers group";
@@ -575,19 +587,45 @@ const loop = () => {
 
 
 
-
-
-
-
-
-
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 
+let gameTimer = "";
+let minutes = 0;
+let seconds = 0;
+
+const startTimer = () => {
+
+  gameTimer = new Timer(() => {
+    let secString = "00:00";
+
+    seconds < 60 ? seconds ++ : seconds = 0;
+
+    if (seconds === 60) minutes ++;
+
+    seconds < 10 ? secString = `0${seconds}` : secString = `${seconds}`;
+    minutes < 10 ? minString = `0${minutes}` : minString = `${minutes}`;
+
+    $timer.innerHTML = `${minString}:${secString}`;
+  }, 100);
+}
+
+let start = false;
+
 window.addEventListener("keydown", function (e) {
     car.keys[e.keyCode] = true;
+
+    if (e.keyCode === 32) {
+      start = !start;
+      if (start) {
+        startTimer();
+      } else {
+        gameTimer.stop();
+      }
+    }
+
 });
 window.addEventListener("keyup", function (e) {
     car.keys[e.keyCode] = false;

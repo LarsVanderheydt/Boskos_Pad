@@ -9,3 +9,12 @@ body { margin: 0; }
 	overflow: hidden;
 	background: linear-gradient(#e4e0ba, #f7d9aa);
 }
+
+#timer {
+	position: absolute;
+	z-index: 9999;
+	right: 0;
+	margin-right: 4rem;
+	width: 4rem;
+	text-align: center;
+}

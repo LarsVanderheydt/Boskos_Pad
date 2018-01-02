@@ -43,7 +43,6 @@ class Car {
 
     });
 
-    // const geom = new THREE.BoxGeometry(5, 2, 3);
     const mat = new THREE.MeshPhongMaterial({
       color: Colors.red
     });

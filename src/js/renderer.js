@@ -71,7 +71,6 @@ let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
 let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier, cameraObject;
 let world;
-// let controls, scene, camera, box, spline, counter = 0;
 
 let fogGame = "";
 let gateGame = "";
@@ -88,10 +87,10 @@ const init = () => {
   createScene();
   createLight();
 
-  // BEGIN STATE
-  //beginscreen = new BeginScreen();
-  //beginscreen.name = "Beginscreentext";
-  //
+  // // BEGIN STATE
+  // beginscreen = new BeginScreen();
+  // beginscreen.name = "Beginscreentext";
+  // //
 
   // SECOND STATE
   //duringscreen = new DuringScreen();
@@ -104,7 +103,10 @@ const init = () => {
   //endscreen.name = "Beginscreentext";
   //
 
-  //cameraObject = new CameraObject();
+
+  //TODO: WIL NIET TOEVOEGEN
+  // cameraObject = new CameraObject();
+  // scene.add(cameraObject.mesh)
 
   car = new Car();
   car.name = "Car";
@@ -381,17 +383,16 @@ const createLight = () => {
 }
 
 const loop = () => {
+  //console.log(car.m.goblin.position.x);
   car.arrowControl();
+
   sky.float();
   kayak.wiggle();
 
   setTimeout(() => {
-    train.move();
-  }, 60000);
-
-  setTimeout(() => {
     blimp.fly();
   }, 60000);
+
   plane.fly();
 
   if (gateGame.closeGate && !gateGame.closed) {
@@ -412,9 +413,38 @@ const loop = () => {
     scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
   }
 
-  if (trainGame.complete) barrier.close();
+  if (car.m.goblin.position.x >= 43) {
+    setTimeout(() => {
+      barrier.close();
+      train.move();
+    }, 60000);
+
+    //TODO: GATE TERUG open + MAAR 1 gate sluit ?
+  }
+
+  if (trainGame.complete){
+   barrier.close();
+   train.move();
+  }
 
   if (nightTimeGame.goDark === true) dark();
+
+
+  //TODO: SCHERMEN TERUG REMOVEN !
+
+  // if (car.m.goblin.position.x < 1){
+  //   beginscreen = new BeginScreen();
+  //   console.log("beginscreen");
+  //
+  // } else
+  if (car.m.goblin.position.x >= 1 && car.m.goblin.position.x <= 9){
+    duringscreen = new DuringScreen();
+    console.log("during screen");
+
+  } else if (car.m.goblin.position.x >= 10){
+    endscreen = new EndScreen();
+    console.log("end screen");
+  }
 
   exampleUtils.run();
   renderer.render(scene, camera);

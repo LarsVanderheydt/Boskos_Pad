@@ -75,7 +75,6 @@ let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
 let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier1, barrier2, cameraObject;
 let world;
-// let controls, scene, camera, box, spline, counter = 0;
 
 let fogGame = "";
 let gateGame = "";
@@ -93,10 +92,10 @@ const init = () => {
   createScene();
   createLight();
 
-  // BEGIN STATE
-  //beginscreen = new BeginScreen();
-  //beginscreen.name = "Beginscreentext";
-  //
+  // // BEGIN STATE
+  // beginscreen = new BeginScreen();
+  // beginscreen.name = "Beginscreentext";
+  // //
 
   // SECOND STATE
   //duringscreen = new DuringScreen();
@@ -109,7 +108,10 @@ const init = () => {
   //endscreen.name = "Beginscreentext";
   //
 
-  //cameraObject = new CameraObject();
+
+  //TODO: WIL NIET TOEVOEGEN
+  // cameraObject = new CameraObject();
+  // scene.add(cameraObject.mesh)
 
   car = new Car();
   car.name = "Car";
@@ -423,13 +425,11 @@ let turnLightOn = false;
 
 
 const loop = () => {
+  //console.log(car.m.goblin.position.x);
   car.arrowControl();
+
   sky.float();
   kayak.wiggle();
-
-  setTimeout(() => {
-    train.move();
-  }, 60000);
 
   setTimeout(() => {
     blimp.fly();
@@ -508,7 +508,7 @@ const loop = () => {
       obstacles.push('Fog');
       pushedFog = true;
     }
-    scene.fog = new THREE.Fog(0xf7d9aa, 500 * (fogGame.level * 1.2), 700);
+    scene.fog = new THREE.Fog(Colors.fog, 500 * (fogGame.level * 1.2), 700);
   }
 
 
@@ -547,7 +547,7 @@ const loop = () => {
           break;
 
         case 'Fog':
-        scene.fog = new THREE.Fog(0xf7d9aa, 1000, 10000);
+        scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
         obstacles.shift();
         pushedFog = false;
         driverGame.complete = false;
@@ -574,7 +574,37 @@ const loop = () => {
     driverGame.gameStarted = false;
   }
 
+  if (car.m.goblin.position.x >= 43) {
+    setTimeout(() => {
+      barrier.close();
+      train.move();
+    }, 60000);
 
+    //TODO: GATE TERUG open + MAAR 1 gate sluit ?
+  }
+
+  if (trainGame.complete){
+   barrier.close();
+   train.move();
+  }
+
+
+
+  //TODO: SCHERMEN TERUG REMOVEN !
+
+  // if (car.m.goblin.position.x < 1){
+  //   beginscreen = new BeginScreen();
+  //   console.log("beginscreen");
+  //
+  // } else
+  if (car.m.goblin.position.x >= 1 && car.m.goblin.position.x <= 9){
+    duringscreen = new DuringScreen();
+    console.log("during screen");
+
+  } else if (car.m.goblin.position.x >= 10){
+    endscreen = new EndScreen();
+    console.log("end screen");
+  }
 
   exampleUtils.run();
   renderer.render(scene, camera);

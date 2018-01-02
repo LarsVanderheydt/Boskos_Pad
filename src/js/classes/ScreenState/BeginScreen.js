@@ -24,7 +24,7 @@ class BeginScreen {
       TitleTextMesh.position.y = 45;
       TitleTextMesh.rotation.x = -1.6;
 
-      let SubOne = "Het Festival gaat beginnen!";
+      let SubOne = "Het Festival gaat bijna beginnen!";
       let SubOneTextGeometry = new THREE.TextGeometry(SubOne, {
         font: font,
         size: 5,
@@ -40,10 +40,10 @@ class BeginScreen {
       SubOneTextMesh.position.y = 45;
       SubOneTextMesh.rotation.x = -1.6;
 
-      let SubTwo = "Ga snel naar JEF filmfestival !";
+      let SubTwo = "Rij zo snel mogelijk naar JEF filmfestival !";
       let SubTwoTextGeometry = new THREE.TextGeometry(SubTwo, {
         font: font,
-        size: 5,
+        size: 4,
         height: 1,
         curveSegments: 20
       });

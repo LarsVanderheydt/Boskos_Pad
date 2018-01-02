@@ -11,6 +11,7 @@ let leds = [0, 1, 2];
 let gameTimer = '';
 let complete = false;
 let timesFailed = 0;
+let powerUpReady = false;
 
 class NightTimeGame {
   constructor({first, second, third}, board, photoPin) {
@@ -60,11 +61,16 @@ class NightTimeGame {
   }
 
   powerUpReady() {
-    this.photoresistor.on("change", () => {
-      if (this.photoresistor.value >= 1000) {
-        this.goDark = true;
-      }
-    });
+    if (powerUpReady) {
+      this.photoresistor.on("change", () => {
+        if (this.photoresistor.value >= 1000) {
+          if (powerUpReady) {
+            this.goDark = true;
+          }
+          powerUpReady = false;
+        }
+      });
+    }
   }
 
   // blink for 2 seconds, then give a button to push on
@@ -98,6 +104,20 @@ class NightTimeGame {
     // reset game for the saboteur
     leds = [0, 1, 2];
     up = true;
+  }
+
+  fullReset() {
+    blink = true;
+    up = true;
+    gameStarted = false;
+    random, index, push, i = 0;
+    leds = [0, 1, 2];
+    gameTimer = '';
+    complete = false;
+    timesFailed = 0;
+    this.goDark = false;
+    this.initSequences();
+    powerUpReady = false;
   }
 
   initSequences() {
@@ -172,6 +192,7 @@ class NightTimeGame {
 
     setTimeout(() => {
       this.reset();
+      powerUpReady = true;
       this.powerUpReady();
     }, 3000);
   }

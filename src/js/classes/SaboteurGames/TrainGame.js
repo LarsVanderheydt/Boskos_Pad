@@ -9,7 +9,7 @@ let gameStarted = false;
 let random, index, push, i = 0;
 let leds = [0, 1, 2];
 let gameTimer = '';
-let complete = false;
+let completeLedGame = false;
 let timesFailed = 0;
 let r = 255, g = 255, b = 255;
 
@@ -51,7 +51,7 @@ class TrainGame {
       btn.button.on('press', () => {
         this.level = 0;
         timesFailed = 0;
-        if (complete) return;
+        if (completeLedGame) return;
 
         if (!gameStarted) {
           gameStarted = true;
@@ -69,6 +69,7 @@ class TrainGame {
   }
 
   powerUpReady() {
+    let rgbLedInterval = "";
     this.joystick.on('change', () => {
       if (this.joystick.x >= 0.5) b -= 15;
       if (this.joystick.x <= -0.5) g += 15;
@@ -84,13 +85,21 @@ class TrainGame {
       if (b >= 255) b = 255;
     });
 
-    setInterval(() => {
-      if (r === 255 && g === 0 && b === 0) {
-        this.complete = true;
+    if (!this.complete) {
+      rgbLedInterval = setInterval(() => {
+        if (r === 255 && g === 0 && b === 0) {
+          this.complete = true;
+        }
+
+        this.rgb.color(`rgb(${r}, ${g}, ${b})`);
+      }, 100);
+    } else {
+      if (rgbLedInterval) {
+        clearInterval(rgbLedInterval);
       }
 
-      this.rgb.color(`rgb(${r}, ${g}, ${b})`);
-    });
+    }
+
   }
 
   // blink for 2 seconds, then give a button to push on
@@ -125,6 +134,21 @@ class TrainGame {
     up = true;
     g = 255;
     b = 255;
+    this.complete = false;
+  }
+
+  fullReset() {
+    blink = true;
+    up = true;
+    gameStarted = false;
+    random, index, push, i = 0;
+    leds = [0, 1, 2];
+    gameTimer = '';
+    completeLedGame = false;
+    timesFailed = 0;
+    r = 255, g = 255, b = 255;
+    this.complete = false;
+    this.initSequences();
   }
 
   initSequences() {
@@ -185,7 +209,7 @@ class TrainGame {
 
     } else {
       gameStarted = false;
-      complete = false;
+      completeLedGame = false;
       this.initSequences();
     }
   }
@@ -195,7 +219,7 @@ class TrainGame {
     gameTimer = 0;
 
     gameStarted = false;
-    complete = true;
+    completeLedGame = true;
 
     setTimeout(() => {
       this.reset();

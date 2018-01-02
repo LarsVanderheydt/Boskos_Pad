@@ -9,6 +9,7 @@
 
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
+const Timer = require('./classes/Timer');
 
 const BeginScreen = require('./classes/ScreenState/BeginScreen');
 const DuringScreen = require('./classes/ScreenState/DuringScreen');
@@ -39,14 +40,17 @@ const Barrier = require('./classes/Objects/Barrier');
   note: duplicates off game classes for solid use of all leds
   -- one class and 2 instances = leds will fail to work normaly --
 */
-
 const FogGame = require('./classes/SaboteurGames/FogGame');
 const GateGame = require('./classes/SaboteurGames/GateGame');
 const TrainGame = require('./classes/SaboteurGames/TrainGame');
 const NightTimeGame = require('./classes/SaboteurGames/NightTimeGame');
+
+const DriverGame = require('./classes/DriverGame');
+
 // get all coordinates from all duplicate objects like trees, ...
 const coordsTree = require('../assets/coords_tree.json');
 
+const $timer = document.getElementById(`timer`);
 const boards = new five.Boards(["B", "A"]);
 
 let game;
@@ -69,13 +73,14 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier, cameraObject;
+let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier1, barrier2, cameraObject;
 let world;
 
 let fogGame = "";
 let gateGame = "";
 let trainGame = "";
 let nightTimeGame = "";
+let driverGame = "";
 let openGate = false;
 
 let joystick = {};
@@ -174,11 +179,20 @@ const init = () => {
   gate = new Gate(101.18, 14.10, 89.50);
   scene.add(gate.mesh);
 
-  barrier = new Barrier(31, 2, -31);
-  scene.add(barrier.mesh);
+  barrier1 = new Barrier(31, 2, -31);
+  scene.add(barrier1.mesh);
 
-  barrier = new Barrier(23, 2, 34);
-  scene.add(barrier.mesh);
+  barrier2 = new Barrier(23, 2, 34);
+  scene.add(barrier2.mesh);
+
+
+
+
+
+
+
+
+
 
   boards.on("ready", () => {
     boards.each(board => {
@@ -197,33 +211,38 @@ const init = () => {
           third: { btn: 12, led: 13 },
         }, board, "A0");
 
-        new five.Button({pin: 8, board}).on("press", () => {
-          nightTimeGame.goDark = false;
-          light();
-        });
 
+        driverGame = new DriverGame([3, 4], [2, 5], board);
+        handleJoystick({right: 18, up: 17, down: 19}, board);
       }
 
       if (board.id === 'B') {
         // sound sensor game
         fogGame = new FogGame({
-          first: { btn: 7, led: 4 },
-          second: { btn: 17, led: 2 },
-          third: { btn: 18, led: 19 }
-        }, board, "A2");
+          first: { btn: 9, led: 8 },
+          second: { btn: 11, led: 10 },
+          third: { btn: 13, led: 12 }
+        }, board, "A3");
 
         trainGame = new TrainGame({
-          first: { btn: 8, led: 11 },
-          second: { btn: 9, led: 12 },
-          third: { btn: 10, led: 13 }
+          first: { btn: 7, led: 6 },
+          second: { btn: 5, led: 4 },
+          third: { btn: 3, led: 2 }
         }, board, {
-          joystick: {x: "A0", y: "A1"},
-          rgb: {r: 3, g: 5, b: 6}
+          joystick: {x: "A5", y: "A4"},
+          rgb: {r: 14, g: 15, b: 16}
         });
 
       }
     });
   });
+
+
+
+
+
+
+
 
   const flowers = new THREE.Object3D();
   flowers.name = "flowers group";
@@ -244,25 +263,34 @@ const init = () => {
 }
 
 const dark = () => {
+  let dark = false;
   if (nightTimeGame.goDark) {
     if (hemisphereLight.intensity >= -0.9) {
-      console.log('dark');
       hemisphereLight.intensity -= 0.01;
+    } else {
+      dark = true;
     }
   }
+
+  return dark;
 }
 
 const light = () => {
+  let light = false;
   if (!nightTimeGame.goDark) {
     if (hemisphereLight.intensity <= 0.9) {
-      console.log('light');
       hemisphereLight.intensity += 0.01;
+      light = false;
+    } else {
+      light = true;
+      turnLightOn = false;
     }
   }
-  requestAnimationFrame(light);
+
+  return light;
 }
 
-const handleJoystick = ({right, up, down}) => {
+const handleJoystick = ({right, up, down}, board) => {
   const dir = {
     left: false,
     right: false,
@@ -270,9 +298,9 @@ const handleJoystick = ({right, up, down}) => {
     down: false
   }
 
-  joystick.right = new five.Button({pin: 7, invert: true});
-  joystick.up = new five.Button({pin: 6, invert: true});
-  joystick.down = new five.Button({pin: 5, invert: true});
+  joystick.right = new five.Button({pin: right, invert: true, board});
+  joystick.up = new five.Button({pin: up, invert: true, board});
+  joystick.down = new five.Button({pin: down, invert: true, board});
 
   joystick.right.on("press", () => {
     dir.right = true;
@@ -382,6 +410,17 @@ const createLight = () => {
   scene.add(ambientLight);
 }
 
+const obstacles = [];
+let startDriverGame = false;
+
+let pushedTrain = false;
+let pushedDark = false;
+let pushedFog = false;
+
+let openBarriers = false;
+let turnLightOn = false;
+
+
 const loop = () => {
   //console.log(car.m.goblin.position.x);
   car.arrowControl();
@@ -395,11 +434,20 @@ const loop = () => {
 
   plane.fly();
 
+
+
+
+
+
+
   if (gateGame.closeGate && !gateGame.closed) {
+
     gateGame.closed = gate.close();
+
   } else {
     gateGame.closeGate = false;
   }
+
 
   if (!gateGame.closeGate && gateGame.closed && openGate) {
     gateGame.closed = gate.open();
@@ -407,10 +455,120 @@ const loop = () => {
     openGate = false;
   }
 
-  if (fogGame.level !== 0) {
+
+
+
+
+
+
+
+  // close barriers and push the obstacle to the array
+  if (trainGame.complete === true) {
+    if (!pushedTrain) {
+      obstacles.push('Train');
+      pushedTrain = true;
+      startDriverGame = true;
+    }
+    if (!barrier1.close() && !barrier2.close() && !openBarriers) {
+      barrier1.close();
+      barrier2.close();
+    } else {
+      trainGame.complete = false;
+      trainGame.reset();
+    }
+  }
+
+  // open the barriers when driver completed the game
+  if (openBarriers) {
+    const open1 = barrier1.open();
+    const open2 = barrier2.open();
+    if (open1 && open2) {
+      openBarriers = false;
+    }
+  }
+
+  if (nightTimeGame.goDark === true) {
+    if (!pushedDark && dark()) {
+      obstacles.push('Dark');
+      pushedDark = true;
+    }
+    dark();
+  }
+
+  if (turnLightOn) {
+    light();
+  }
+
+
+  if (fogGame.level > 0 && !fogGame.noFog) {
+    if (!pushedFog) {
+      obstacles.push('Fog');
+      pushedFog = true;
+    }
     scene.fog = new THREE.Fog(Colors.fog, 500 * (fogGame.level * 1.2), 700);
+  }
+
+
+  // to do every obstacle one by one check the first in the row and disable that one
+  if (obstacles.length >= 1) {
+    startDriverGame = true;
+    // driverGame.gameStarted = false;
+
+    if (driverGame.complete === true) {
+      startDriverGame = false;
+      driverGame.reset();
+
+      switch (obstacles[0]) {
+        case 'Train':
+        openBarriers = true;
+        obstacles.shift();
+        pushedTrain = false;
+        driverGame.complete = false;
+
+        setTimeout(() => {
+          trainGame.fullReset();
+        }, 1000);
+          break;
+
+        case 'Dark':
+        nightTimeGame.goDark = false;
+        turnLightOn = true;
+
+        setTimeout(() => {
+          nightTimeGame.fullReset();
+        }, 1000);
+
+        obstacles.shift();
+        pushedDark = false;
+        driverGame.complete = false;
+          break;
+
+        case 'Fog':
+        scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
+        obstacles.shift();
+        pushedFog = false;
+        driverGame.complete = false;
+        fogGame.noFog = true;
+        setTimeout(() => {
+          fogGame.fullReset();
+        }, 1000);
+
+          break;
+      }
+    }
+
+    // start the drivers game
+    if (!driverGame.gameStarted && startDriverGame) {
+      if (driverGame) {
+        driverGame.start();
+      }
+
+      startDriverGame = false;
+      driverGame.complete = false;
+    }
   } else {
-    scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
+    startDriverGame = false;
+    driverGame.gameStarted = false;
   }
 
   if (car.m.goblin.position.x >= 43) {
@@ -427,7 +585,6 @@ const loop = () => {
    train.move();
   }
 
-  if (nightTimeGame.goDark === true) dark();
 
 
   //TODO: SCHERMEN TERUG REMOVEN !
@@ -451,8 +608,40 @@ const loop = () => {
   requestAnimationFrame(loop);
 }
 
+let gameTimer = "";
+let minutes = 0;
+let seconds = 0;
+
+const startTimer = () => {
+
+  gameTimer = new Timer(() => {
+    let secString = "00:00";
+
+    seconds < 60 ? seconds ++ : seconds = 0;
+
+    if (seconds === 60) minutes ++;
+
+    seconds < 10 ? secString = `0${seconds}` : secString = `${seconds}`;
+    minutes < 10 ? minString = `0${minutes}` : minString = `${minutes}`;
+
+    $timer.innerHTML = `${minString}:${secString}`;
+  }, 100);
+}
+
+let start = false;
+
 window.addEventListener("keydown", function (e) {
     car.keys[e.keyCode] = true;
+
+    if (e.keyCode === 32) {
+      start = !start;
+      if (start) {
+        startTimer();
+      } else {
+        gameTimer.stop();
+      }
+    }
+
 });
 window.addEventListener("keyup", function (e) {
     car.keys[e.keyCode] = false;

@@ -137,14 +137,17 @@ const init = () => {
   train.mesh.position.z = -90;
   scene.add(train.mesh);
 
-  const startTrainAfter = 80000 * 4;
+  const startTrainAfter = 60000 * 2;
   setInterval(() => {
-    train.pause = false;
+    if (car.x >= 30) {
+      train.pause = false;
+    }
   }, startTrainAfter);
 
+
   blimp = new Blimp();
-  blimp.mesh.position.x = 160;
-  blimp.mesh.position.z = 150;
+  blimp.mesh.position.x = 200;
+  blimp.mesh.position.z = -70;
   scene.add(blimp.mesh);
 
   plane = new Plane();
@@ -153,7 +156,7 @@ const init = () => {
   plane.mesh.position.z = -90;
   scene.add(plane.mesh);
 
-  // start plane again after 3 min (when stopped)
+  // start plane again after 4 min (when stopped)
   const startPlaneAfter = 60000 * 4;
   setInterval(() => {
     plane.pause = false;
@@ -431,6 +434,7 @@ const loop = () => {
   setTimeout(() => {
     blimp.fly();
   }, 60000);
+
   plane.fly();
 
 
@@ -594,7 +598,7 @@ const startTimer = () => {
     minutes < 10 ? minString = `0${minutes}` : minString = `${minutes}`;
 
     $timer.innerHTML = `${minString}:${secString}`;
-  }, 100);
+  }, 1000);
 }
 
 let start = false;

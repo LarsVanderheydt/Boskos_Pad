@@ -23,7 +23,7 @@ class Plane {
       object.receiveShadow = true;
 
       object.rotation.y = this.angle + (Math.PI / 180);
-      object.position.y = 40;
+      object.position.y = 20;
 
       object.traverse(child => {
         if (child instanceof THREE.Mesh) {

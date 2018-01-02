@@ -40,8 +40,8 @@ class Blimp {
     if (!this.pause) {
       if (this.mesh.position.x <= stopBlimpAt) {
         this.pause = true;
-        this.mesh.position.x = -20;
-        this.mesh.position.z = -90;
+        this.mesh.position.x = 200;
+        this.mesh.position.z = -70;
       } else {
         this.mesh.position.z += this.speed * Math.sin(-this.angle);
         this.mesh.position.x += this.speed * Math.cos(-this.angle);

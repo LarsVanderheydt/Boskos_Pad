@@ -13,12 +13,14 @@ let complete = false;
 let timesFailed = 0;
 
 class GateGame {
-  constructor({first, second, third}, board, tiltPin) {
+  constructor({first, second, third}, board, btnPin, ledPin) {
     this.closeGate = false;
     this.closed = false;
 
     this.board = board;
-    this.tilt = new five.Button({pin: tiltPin, invert: true, board});
+
+    this.led = new five.Led({pin: ledPin, board});
+    this.btn = new five.Button({pin: btnPin, invert: true, board});
     this.buttons = [
       {
         button: new five.Button({pin: first.btn, board: board}),
@@ -61,9 +63,11 @@ class GateGame {
   }
 
   powerUpReady() {
-    this.tilt.on("up", () => {
+    this.led.on();
+    this.btn.on("press", () => {
       if (!this.closed && !this.closeGate) {
         this.closeGate = true;
+        this.led.off();
       }
     });
   }

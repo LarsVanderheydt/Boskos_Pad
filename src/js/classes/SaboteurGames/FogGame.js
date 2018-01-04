@@ -66,8 +66,7 @@ class FogGame {
 
       this.sensor.on("change", () => {
         const constr = this.sensor.scaleTo(0, 100);
-        // if (this.level <= 0) this.level = 1;
-
+        // console.log(constr);
         if (constr >= 8) {
           this.level -= 0.01;
         } else {

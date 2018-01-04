@@ -6,6 +6,7 @@
     Wit: Down
     Zwart: Gnd
 */
+
 const {remote} = require('electron');
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
@@ -200,15 +201,6 @@ const init = () => {
   barrier2 = new Barrier(23, 2, 34);
   scene.add(barrier2.mesh);
 
-
-
-
-
-
-
-
-
-
   boards.on("ready", () => {
     boards.each(board => {
 
@@ -272,13 +264,6 @@ const init = () => {
       }
     });
   });
-
-
-
-
-
-
-
 
   const flowers = new THREE.Object3D();
   flowers.name = "flowers group";
@@ -475,6 +460,8 @@ const loop = () => {
     fogThickness -= 3;
   }
 
+  // trees.mesh.wind();
+
   //console.log(car.m.goblin.position.x);
   car.arrowControl();
 
@@ -505,7 +492,7 @@ const loop = () => {
 
     gateGame.closed = gate1.open();
     gateGame.closed = gate2.open();
-    
+
   } else {
     openGate = false;
   }

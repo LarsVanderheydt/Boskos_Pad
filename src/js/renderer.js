@@ -6,6 +6,7 @@
     Wit: Down
     Zwart: Gnd
 */
+
 const {remote} = require('electron');
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
@@ -96,23 +97,23 @@ const init = () => {
   createScene();
   createLight();
 
-  // // BEGIN STATE
-  beginscreen = new BeginScreen();
-  beginscreen.name = "Beginscreentext";
-
-  // //
-
-  // SECOND STATE
-  duringscreen = new DuringScreen();
-  duringscreen.name = "Duringscreentext";
+  // // // BEGIN STATE
+  // beginscreen = new BeginScreen();
+  // beginscreen.name = "Beginscreentext";
   //
-
-  // END STATE
-  endscreen = new EndScreen();
-  endscreen.name = "Endscreentext";
-  setTimeout(() => {
-    endscreen.hide();
-  }, 1000);
+  // // //
+  //
+  // // SECOND STATE
+  // duringscreen = new DuringScreen();
+  // duringscreen.name = "Duringscreentext";
+  // //
+  //
+  // // END STATE
+  // endscreen = new EndScreen();
+  // endscreen.name = "Endscreentext";
+  // setTimeout(() => {
+  //   endscreen.hide();
+  // }, 1000);
   //
 
 
@@ -195,15 +196,6 @@ const init = () => {
   barrier2 = new Barrier(23, 2, 34);
   scene.add(barrier2.mesh);
 
-
-
-
-
-
-
-
-
-
   boards.on("ready", () => {
     boards.each(board => {
       if (board.id === 'B') {
@@ -247,13 +239,6 @@ const init = () => {
       }
     });
   });
-
-
-
-
-
-
-
 
   const flowers = new THREE.Object3D();
   flowers.name = "flowers group";
@@ -450,7 +435,7 @@ const loop = () => {
     fogThickness -= 3;
   }
 
-
+  // trees.mesh.wind();
 
   //console.log(car.m.goblin.position.x);
   car.arrowControl();

@@ -12,8 +12,6 @@ let m;
 
 class Car {
   constructor() {
-    this.x = 0;
-    this.y = 0;
     this.velY = 0;
     this.velX = 0;
     this.speed = 0.01;
@@ -21,6 +19,7 @@ class Car {
     this.keys = [];
     this.angle = 0;
     this.joystickPause = false;
+    this.stop = false;
 
     this.left = false;
     this.right = false;
@@ -44,7 +43,8 @@ class Car {
     });
 
     const mat = new THREE.MeshPhongMaterial({
-      color: Colors.red
+      color: Colors.red,
+      fog: false
     });
 
     this.m = exampleUtils.createBox( 1.5, 1, 1, 100, mat );
@@ -61,16 +61,18 @@ class Car {
   }
 
   arrowControl() {
+    if (this.stop) return;
+
     if (this.keys[38]) {
       if (this.velY > -this.speed) {
-        this.velY --;
+        this.velY -= 3;
         this.angle = 0.50;
       }
     }
 
     if (this.keys[40]) {
       if (this.velY < this.speed) {
-        this.velY ++;
+        this.velY += 3;
         this.angle = -0.50;
       }
     }
@@ -93,6 +95,8 @@ class Car {
   }
 
   miniJoystickControl(dir) {
+    if (this.stop) return;
+
     this.velX = 0;
     this.velY = 0;
     const speed = 1;

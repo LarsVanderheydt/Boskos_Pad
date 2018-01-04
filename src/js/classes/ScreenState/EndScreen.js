@@ -1,4 +1,7 @@
 const Colors = require('../../objects/Colors');
+let TitleTextMesh, SubOneTextMesh, SubTwoTextMesh, StartTextMesh = "";
+let SubTwo = "";
+const $time = document.getElementById(`timer`);
 
 class EndScreen {
   constructor() {
@@ -7,7 +10,7 @@ class EndScreen {
 
     loader.load('assets/fonts/Open_Sans_Regular.json', function(font) {
 
-      let TextMaterial = new THREE.MeshBasicMaterial({color: Colors.black});
+      let TextMaterial = new THREE.MeshBasicMaterial({color: Colors.black, fog: false});
       let Title = "HOERA !";
       let TitleTextGeometry = new THREE.TextGeometry(Title, {
         font: font,
@@ -17,7 +20,7 @@ class EndScreen {
       });
 
       TitleTextGeometry.computeBoundingBox();
-      let TitleTextMesh = new THREE.Mesh(TitleTextGeometry, TextMaterial);
+      TitleTextMesh = new THREE.Mesh(TitleTextGeometry, TextMaterial);
 
       TitleTextMesh.position.x = 60;
       TitleTextMesh.position.z = -15;
@@ -33,14 +36,14 @@ class EndScreen {
       });
 
       SubOneTextGeometry.computeBoundingBox();
-      let SubOneTextMesh = new THREE.Mesh(SubOneTextGeometry, TextMaterial);
+      SubOneTextMesh = new THREE.Mesh(SubOneTextGeometry, TextMaterial);
 
       SubOneTextMesh.position.x = 40;
       SubOneTextMesh.position.z = 0;
       SubOneTextMesh.position.y = 45;
       SubOneTextMesh.rotation.x = -1.6;
 
-      let SubTwo = "Jouw tijd was ${gameduration}";
+      SubTwo = `Jouw tijd was ${$time.innerHTML}`;
       let SubTwoTextGeometry = new THREE.TextGeometry(SubTwo, {
         font: font,
         size: 5,
@@ -49,9 +52,10 @@ class EndScreen {
       });
 
       SubTwoTextGeometry.computeBoundingBox();
-      let SubTwoTextMesh = new THREE.Mesh(SubTwoTextGeometry, TextMaterial);
+      SubTwoTextMesh = new THREE.Mesh(SubTwoTextGeometry, TextMaterial);
 
-      SubTwoTextMesh.position.x = 37.5;
+      // SubTwoTextMesh.position.x = 37.5;
+      SubTwoTextMesh.position.x = 50;
       SubTwoTextMesh.position.z = 10;
       SubTwoTextMesh.position.y = 45;
       SubTwoTextMesh.rotation.x = -1.6;
@@ -65,7 +69,7 @@ class EndScreen {
       });
 
       StartTextGeometry.computeBoundingBox();
-      let StartTextMesh = new THREE.Mesh(StartTextGeometry, TextMaterial);
+      StartTextMesh = new THREE.Mesh(StartTextGeometry, TextMaterial);
 
       StartTextMesh.position.x = 50;
       StartTextMesh.position.z = 40;
@@ -74,6 +78,20 @@ class EndScreen {
 
       scene.add(TitleTextMesh, SubOneTextMesh, SubTwoTextMesh, StartTextMesh);
     });
+  }
+
+  hide() {
+    TitleTextMesh.visible = false;
+    SubOneTextMesh.visible = false;
+    SubTwoTextMesh.visible = false;
+    StartTextMesh.visible = false;
+  }
+
+  show() {
+    TitleTextMesh.visible = true;
+    SubOneTextMesh.visible = true;
+    SubTwoTextMesh.visible = true;
+    StartTextMesh.visible = true;
   }
 }
 

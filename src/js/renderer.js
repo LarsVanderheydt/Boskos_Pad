@@ -6,7 +6,7 @@
     Wit: Down
     Zwart: Gnd
 */
-
+const {remote} = require('electron');
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 const Timer = require('./classes/Timer');
@@ -83,6 +83,10 @@ let nightTimeGame = "";
 let driverGame = "";
 let openGate = false;
 
+let gameTimer = "";
+let minutes = 0;
+let seconds = 0;
+
 let joystick = {};
 
 let mousePos = {x: 0, y: 0};
@@ -93,19 +97,22 @@ const init = () => {
   createLight();
 
   // // BEGIN STATE
-  // beginscreen = new BeginScreen();
-  // beginscreen.name = "Beginscreentext";
+  beginscreen = new BeginScreen();
+  beginscreen.name = "Beginscreentext";
+
   // //
 
   // SECOND STATE
-  //duringscreen = new DuringScreen();
-  //duringscreen.name = "Duringscreentext";
-
+  duringscreen = new DuringScreen();
+  duringscreen.name = "Duringscreentext";
   //
 
   // END STATE
-  //endscreen = new EndScreen();
-  //endscreen.name = "Beginscreentext";
+  endscreen = new EndScreen();
+  endscreen.name = "Endscreentext";
+  setTimeout(() => {
+    endscreen.hide();
+  }, 1000);
   //
 
 
@@ -199,7 +206,7 @@ const init = () => {
 
   boards.on("ready", () => {
     boards.each(board => {
-      if (board.id === 'A') {
+      if (board.id === 'B') {
 
         // tilt switch game
         // gateGame = new GateGame({
@@ -209,32 +216,33 @@ const init = () => {
         // }, board, 4);
 
         nightTimeGame = new NightTimeGame({
-          first: { btn: 8, led: 9 },
-          second: { btn: 10, led: 11 },
-          third: { btn: 12, led: 13 },
+          first: { btn: 7, led: 8 },
+          second: { btn: 6, led: 9 },
+          third: { btn: 5, led: 10 },
         }, board, "A0");
 
-
-        driverGame = new DriverGame([3, 4], [2, 5], board);
-        handleJoystick({right: 18, up: 17, down: 19}, board);
+        // driverGame = new DriverGame([3, 4], [2, 5], board);
+        // handleJoystick({right: 18, up: 17, down: 19}, board);
+        // new five.B
       }
 
-      if (board.id === 'B') {
-        // sound sensor game
-        fogGame = new FogGame({
-          first: { btn: 9, led: 8 },
-          second: { btn: 11, led: 10 },
-          third: { btn: 13, led: 12 }
-        }, board, "A3");
+      if (board.id === 'A') {
 
-        trainGame = new TrainGame({
-          first: { btn: 7, led: 6 },
-          second: { btn: 5, led: 4 },
-          third: { btn: 3, led: 2 }
-        }, board, {
-          joystick: {x: "A5", y: "A4"},
-          rgb: {r: 14, g: 15, b: 16}
-        });
+        // sound sensor game
+        // fogGame = new FogGame({
+        //   first: { btn: 9, led: 8 },
+        //   second: { btn: 11, led: 10 },
+        //   third: { btn: 13, led: 12 }
+        // }, board, "A3");
+        //
+        // trainGame = new TrainGame({
+        //   first: { btn: 7, led: 6 },
+        //   second: { btn: 5, led: 4 },
+        //   third: { btn: 3, led: 2 }
+        // }, board, {
+        //   joystick: {x: "A5", y: "A4"},
+        //   rgb: {r: 14, g: 15, b: 16}
+        // });
 
       }
     });
@@ -423,8 +431,27 @@ let pushedFog = false;
 let openBarriers = false;
 let turnLightOn = false;
 
+let fogThickness = 0;
+let addFog = false;
+let showFinishScreen = false;
+let showStartScreen = false;
+let timeout = true;
 
 const loop = () => {
+  scene.fog = new THREE.Fog(Colors.fog, fogThickness, 700);
+
+  if (addFog) {
+    if (fogThickness <= 600) {
+      fogThickness += 3;
+    }
+  }
+
+  if (!addFog && fogThickness >= 0) {
+    fogThickness -= 3;
+  }
+
+
+
   //console.log(car.m.goblin.position.x);
   car.arrowControl();
 
@@ -436,8 +463,6 @@ const loop = () => {
   }, 60000);
 
   plane.fly();
-
-
 
 
 
@@ -576,7 +601,8 @@ const loop = () => {
 
   if (car.m.goblin.position.x >= 43) {
     setTimeout(() => {
-      barrier.close();
+      barrier1.close();
+      barrier2.close();
       train.move();
     }, 60000);
 
@@ -584,36 +610,51 @@ const loop = () => {
   }
 
   if (trainGame.complete){
-   barrier.close();
+   barrier1.close();
+   barrier2.close();
    train.move();
   }
 
 
 
   //TODO: SCHERMEN TERUG REMOVEN !
-
-  // if (car.m.goblin.position.x < 1){
-  //   beginscreen = new BeginScreen();
-  //   console.log("beginscreen");
-  //
-  // } else
-  if (car.m.goblin.position.x >= 1 && car.m.goblin.position.x <= 9){
-    duringscreen = new DuringScreen();
-    console.log("during screen");
-
-  } else if (car.m.goblin.position.x >= 10){
-    endscreen = new EndScreen();
-    console.log("end screen");
+  if (car.m.goblin.position.x >= 160){
+  // if (car.m.goblin.position.x >= 20){
+    showFinishScreen = true;
   }
+
+
+  if (showFinishScreen) {
+    gameTimer.stop();
+    endscreen.show();
+    car.stop = true;
+    addFog = false;
+
+    if (timeout) {
+      setTimeout(() => {
+        car.m.goblin.position.x = 0;
+        car.mesh.position.x = 0;
+        endscreen.hide();
+
+        showFinishScreen = false;
+        car.stop = false;
+        beginscreen.show();
+
+        seconds = 0;
+        minutes = 0;
+        gameTimer.reset(1000);
+      }, 3000);
+      timeout = false;
+    }
+  }
+
+
+
 
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
-
-let gameTimer = "";
-let minutes = 0;
-let seconds = 0;
 
 const startTimer = () => {
 
@@ -636,13 +677,20 @@ let start = false;
 window.addEventListener("keydown", function (e) {
     car.keys[e.keyCode] = true;
 
+    // in a button press
     if (e.keyCode === 32) {
-      start = !start;
       if (start) {
-        startTimer();
+
+        // scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
       } else {
-        gameTimer.stop();
+        startTimer();
+        beginscreen.hide();
+        car.stop = false;
+        addFog = true;
+
       }
+
+      start = !start;
     }
 
 });

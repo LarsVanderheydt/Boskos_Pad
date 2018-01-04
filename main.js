@@ -1,4 +1,5 @@
 const electron = require('electron')
+
 const app = electron.app
 const BrowserWindow = electron.BrowserWindow
 
@@ -8,9 +9,7 @@ const url = require('url')
 let mainWindow
 
 const createWindow = () => {
-  mainWindow = new BrowserWindow({width: 800, height: 600
-    // fullscreen: true
-  })
+  mainWindow = new BrowserWindow({width: 800, height: 600})
 
   let ext = './chrome_extension/threejs_inspector/1.9.12_0';
   BrowserWindow.addDevToolsExtension(ext);

@@ -51,7 +51,17 @@ const DriverGame = require('./classes/DriverGame');
 const coordsTree = require('../assets/coords_tree.json');
 
 const $timer = document.getElementById(`timer`);
-const boards = new five.Boards(["B", "A"]);
+const boards = new five.Boards([
+  { id: "A", port: "/dev/cu.wchusbserial14210" },
+  { id: "B", port: "/dev/cu.wchusbserial14230" },
+  { id: "C", port: "/dev/cu.usbmodem14221" }
+]);
+
+// const boards = new five.Boards([
+// "A", "B", "C"
+// ]);
+
+console.log(boards);
 
 let game;
 
@@ -73,7 +83,7 @@ process.__defineGetter__('stdin', () => {
 
 let hemisphereLight, shadowLight, ambientLight;
 let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH, renderer, container;
-let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate, barrier1, barrier2, cameraObject;
+let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate1, gate2, barrier1, barrier2, cameraObject;
 let world;
 
 let fogGame = "";
@@ -100,12 +110,9 @@ const init = () => {
   beginscreen = new BeginScreen();
   beginscreen.name = "Beginscreentext";
 
-  // //
-
   // SECOND STATE
   duringscreen = new DuringScreen();
   duringscreen.name = "Duringscreentext";
-  //
 
   // END STATE
   endscreen = new EndScreen();
@@ -113,8 +120,6 @@ const init = () => {
   setTimeout(() => {
     endscreen.hide();
   }, 1000);
-  //
-
 
   //TODO: WIL NIET TOEVOEGEN
   // cameraObject = new CameraObject();
@@ -183,11 +188,11 @@ const init = () => {
   chalet = new Chalet();
   scene.add(chalet.mesh);
 
-  gate = new Gate(86.18, -24.10, 89.50);
-  scene.add(gate.mesh);
+  gate1 = new Gate(86.18, -24.10, 89.50);
+  scene.add(gate1.mesh);
 
-  gate = new Gate(101.18, 14.10, 89.50);
-  scene.add(gate.mesh);
+  gate2 = new Gate(101.18, 14.10, 89.50);
+  scene.add(gate2.mesh);
 
   barrier1 = new Barrier(31, 2, -31);
   scene.add(barrier1.mesh);
@@ -206,44 +211,64 @@ const init = () => {
 
   boards.on("ready", () => {
     boards.each(board => {
-      if (board.id === 'B') {
-
-        // tilt switch game
-        // gateGame = new GateGame({
-        //   first: { btn: 8, led: 9 },
-        //   second: { btn: 10, led: 11 },
-        //   third: { btn: 12, led: 13 }
-        // }, board, 4);
-
-        nightTimeGame = new NightTimeGame({
-          first: { btn: 7, led: 8 },
-          second: { btn: 6, led: 9 },
-          third: { btn: 5, led: 10 },
-        }, board, "A0");
-
-        // driverGame = new DriverGame([3, 4], [2, 5], board);
-        // handleJoystick({right: 18, up: 17, down: 19}, board);
-        // new five.B
-      }
 
       if (board.id === 'A') {
+      // LEFT SIDE OF TABLE (JOYSTICK POV)
+      // train game
+
+      // tilt switch game
+      const leftTop = {
+        first: { btn: 6, led: 4 },
+        second: { btn: 7, led: 3 },
+        third: { btn: 5, led: 2 }
+      };
+
+      trainGame = new TrainGame(leftTop, board, {
+        joystick: {x: "A1", y: "A2"},
+        rgb: {r: 14, g: 15, b: 16}
+      });
+
 
         // sound sensor game
-        // fogGame = new FogGame({
-        //   first: { btn: 9, led: 8 },
-        //   second: { btn: 11, led: 10 },
-        //   third: { btn: 13, led: 12 }
-        // }, board, "A3");
-        //
-        // trainGame = new TrainGame({
-        //   first: { btn: 7, led: 6 },
-        //   second: { btn: 5, led: 4 },
-        //   third: { btn: 3, led: 2 }
-        // }, board, {
-        //   joystick: {x: "A5", y: "A4"},
-        //   rgb: {r: 14, g: 15, b: 16}
-        // });
+        const leftBottom = {
+          first: { btn: 12, led: 8 },
+          second: { btn: 11, led: 10 },
+          third: { btn: 13, led: 9 }
+        }
 
+        nightTimeGame = new NightTimeGame(leftBottom, board, "A0");
+      }
+
+
+      if (board.id === 'B') {
+      // CENTER OF TABLE (JOYSTICK POV)
+
+      driverGame = new DriverGame([10, 6], [11, 5], board);
+      handleJoystick({right: 7, up: 8, down: 9}, board);
+
+        // new five.Led({pin: 8, board}).on();
+        // new five.Led({pin: 9, board}).on();
+        // new five.Led({pin: 10, board}).on();
+
+      }
+
+      if (board.id === "C") {
+      // RIGHT SIDE OF TABLE (JOYSTICK POV)
+
+        const rightTop = {
+          first: { btn: 13, led: 8 },
+          second: { btn: 11, led: 10 },
+          third: { btn: 12, led: 9 }
+        }
+        gateGame = new GateGame(rightTop, board, "A1", "A2");
+
+        // night
+        const rightBottom = {
+          first: { btn: 4, led: 7 },
+          second: { btn: 2, led: 5 },
+          third: { btn: 3, led: 6 }
+        }
+        fogGame = new FogGame(rightBottom, board, "A0");
       }
     });
   });
@@ -450,8 +475,6 @@ const loop = () => {
     fogThickness -= 3;
   }
 
-
-
   //console.log(car.m.goblin.position.x);
   car.arrowControl();
 
@@ -470,7 +493,8 @@ const loop = () => {
 
   if (gateGame.closeGate && !gateGame.closed) {
 
-    gateGame.closed = gate.close();
+    gateGame.closed = gate1.close();
+    gateGame.closed = gate2.close();
 
   } else {
     gateGame.closeGate = false;
@@ -478,7 +502,10 @@ const loop = () => {
 
 
   if (!gateGame.closeGate && gateGame.closed && openGate) {
-    gateGame.closed = gate.open();
+
+    gateGame.closed = gate1.open();
+    gateGame.closed = gate2.open();
+    
   } else {
     openGate = false;
   }

@@ -71,6 +71,8 @@ class TrainGame {
   powerUpReady() {
     let rgbLedInterval = "";
     this.joystick.on('change', () => {
+      console.log('x: ', this.joystick.x);
+      console.log('y: ', this.joystick.y);
       if (this.joystick.x >= 0.5) b -= 15;
       if (this.joystick.x <= -0.5) g += 15;
       if (this.joystick.y >= 0.5) b += 15;

@@ -97,23 +97,23 @@ const init = () => {
   createScene();
   createLight();
 
-  // // // BEGIN STATE
-  // beginscreen = new BeginScreen();
-  // beginscreen.name = "Beginscreentext";
-  //
-  // // //
-  //
-  // // SECOND STATE
-  // duringscreen = new DuringScreen();
-  // duringscreen.name = "Duringscreentext";
+  // // BEGIN STATE
+  beginscreen = new BeginScreen();
+  beginscreen.name = "Beginscreentext";
+
   // //
+
+  // SECOND STATE
+  duringscreen = new DuringScreen();
+  duringscreen.name = "Duringscreentext";
   //
-  // // END STATE
-  // endscreen = new EndScreen();
-  // endscreen.name = "Endscreentext";
-  // setTimeout(() => {
-  //   endscreen.hide();
-  // }, 1000);
+
+  // END STATE
+  endscreen = new EndScreen();
+  endscreen.name = "Endscreentext";
+  setTimeout(() => {
+    endscreen.hide();
+  }, 1000);
   //
 
 

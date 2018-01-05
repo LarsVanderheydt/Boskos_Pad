@@ -65,14 +65,14 @@ class Car {
 
     if (this.keys[38]) {
       if (this.velY > -this.speed) {
-        this.velY -= 3;
+        this.velY -= 2.5;
         this.angle = 0.50;
       }
     }
 
     if (this.keys[40]) {
       if (this.velY < this.speed) {
-        this.velY += 3;
+        this.velY += 2.5;
         this.angle = -0.50;
       }
     }
@@ -95,6 +95,8 @@ class Car {
   }
 
   miniJoystickControl(dir) {
+    console.log(dir);
+    console.log(this.stop);
     if (this.stop) return;
 
     this.velX = 0;
@@ -122,6 +124,7 @@ class Car {
   }
 
   move() {
+    //console.log("MOVE");
     this.velY *= this.friction;
     this.velX *= this.friction;
 

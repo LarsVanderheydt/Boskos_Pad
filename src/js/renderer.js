@@ -111,26 +111,9 @@ const init = () => {
   beginscreen = new BeginScreen();
   beginscreen.name = "Beginscreentext";
 
-<<<<<<< HEAD
-  // //
-
   // SECOND STATE
   duringscreen = new DuringScreen();
   duringscreen.name = "Duringscreentext";
-  //
-
-  // END STATE
-  endscreen = new EndScreen();
-  endscreen.name = "Endscreentext";
-  setTimeout(() => {
-    endscreen.hide();
-  }, 1000);
-  //
-=======
-  // SECOND STATE
-  duringscreen = new DuringScreen();
-  duringscreen.name = "Duringscreentext";
->>>>>>> e86e4d9ba89492f78e4c18ff68187312f36d3a0d
 
   // END STATE
   endscreen = new EndScreen();
@@ -172,7 +155,7 @@ const init = () => {
   const startTrainAfter = 60000 * 2;
   setInterval(() => {
     if (car.x >= 30) {
-      train.pause = false;
+      //train.pause = false;
     }
   }, startTrainAfter);
 
@@ -227,15 +210,24 @@ const init = () => {
 
       // tilt switch game
       const leftTop = {
-        first: { btn: 6, led: 4 },
-        second: { btn: 7, led: 3 },
-        third: { btn: 5, led: 2 }
+        first: { btn: 17, led: 4 },
+        second: { btn: 7, led: 19 },
+        third: { btn: 18, led: 2 }
       };
 
       trainGame = new TrainGame(leftTop, board, {
         joystick: {x: "A1", y: "A2"},
-        rgb: {r: 14, g: 15, b: 16}
+        rgb: {r: 3, g: 6, b: 5}
       });
+
+//       const led = new five.Led.RGB({
+//     pins: {
+//       red: 3,
+//       green: 6,
+//       blue: 5
+//     }, board
+//   });
+// led.color("#FF0000");
 
 
         // sound sensor game
@@ -253,7 +245,7 @@ const init = () => {
       // CENTER OF TABLE (JOYSTICK POV)
 
       driverGame = new DriverGame([10, 6], [11, 5], board);
-      handleJoystick({right: 7, up: 8, down: 9}, board);
+      handleJoystick({right: 8, up: 7, down: 9}, board);
 
         // new five.Led({pin: 8, board}).on();
         // new five.Led({pin: 9, board}).on();
@@ -336,41 +328,47 @@ const handleJoystick = ({right, up, down}, board) => {
     down: false
   }
 
-  joystick.right = new five.Button({pin: right, invert: true, board});
-  joystick.up = new five.Button({pin: up, invert: true, board});
-  joystick.down = new five.Button({pin: down, invert: true, board});
+  joystick.right = new five.Button({pin: right, board});
+  joystick.up = new five.Button({pin: up, board});
+  joystick.down = new five.Button({pin: down, board});
 
   joystick.right.on("press", () => {
+    console.log("right");
     dir.right = true;
     car.joystickPause = false;
     car.miniJoystickControl(dir);
   });
 
   joystick.right.on("release", () => {
+        console.log("rightR");
     dir.right = false;
     car.joystickPause = true;
     car.miniJoystickControl(dir);
   });
 
   joystick.up.on("press", () => {
+        console.log("up");
     dir.up = true;
     car.joystickPause = false;
     car.miniJoystickControl(dir);
   });
 
   joystick.up.on("release", () => {
+        console.log("upR");
     dir.up = false;
     car.joystickPause = true;
     car.miniJoystickControl(dir);
   });
 
   joystick.down.on("press", () => {
+        console.log("down");
     dir.down = true;
     car.joystickPause = false;
     car.miniJoystickControl(dir);
   });
 
   joystick.down.on("release", () => {
+        console.log("downR");
     dir.down = false;
     car.joystickPause = true;
     car.miniJoystickControl(dir);
@@ -644,6 +642,7 @@ const loop = () => {
    barrier1.close();
    barrier2.close();
    train.move();
+
   }
 
 

@@ -63,7 +63,7 @@ class NightTimeGame {
   powerUpReady() {
     if (powerUpReady) {
       this.photoresistor.on("change", () => {
-        console.log(this.photoresistor.value);
+        //console.log(this.photoresistor.value);
         if (this.photoresistor.value >= 1000) {
           if (powerUpReady) {
             this.goDark = true;

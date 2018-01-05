@@ -12,9 +12,6 @@ const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 const Timer = require('./classes/Timer');
 
-// const BeginScreen = require('./classes/ScreenState/BeginScreen');
-const DuringScreen = require('./classes/ScreenState/DuringScreen');
-// const EndScreen = require('./classes/ScreenState/EndScreen');
 const CameraObject = require('./classes/Objects/CameraObject')
 
 const Floor = require('./classes/SceneFloor/Floor');
@@ -109,21 +106,6 @@ const init = () => {
   exampleUtils.initialize();
   createScene();
   createLight();
-
-  // // BEGIN STATE
-  // beginscreen = new BeginScreen();
-  // beginscreen.name = "Beginscreentext";
-
-  // SECOND STATE
-  duringscreen = new DuringScreen();
-  duringscreen.name = "Duringscreentext";
-
-  // END STATE
-  // endscreen = new EndScreen();
-  // endscreen.name = "Endscreentext";
-  setTimeout(() => {
-    // endscreen.hide();
-  }, 1000);
 
   //TODO: WIL NIET TOEVOEGEN
   // cameraObject = new CameraObject();
@@ -222,15 +204,6 @@ const init = () => {
         rgb: {r: 3, g: 6, b: 5}
       });
 
-//       const led = new five.Led.RGB({
-//     pins: {
-//       red: 3,
-//       green: 6,
-//       blue: 5
-//     }, board
-//   });
-// led.color("#FF0000");
-
 
         const leftBottom = {
           first: { btn: 12, led: 8 },
@@ -245,13 +218,8 @@ const init = () => {
       if (board.id === 'B') {
       // CENTER OF TABLE (JOYSTICK POV)
 
-      driverGame = new DriverGame([10, 6], [11, 5], board);
-      handleJoystick({right: 8, up: 7, down: 9}, board);
-
-        // new five.Led({pin: 8, board}).on();
-        // new five.Led({pin: 9, board}).on();
-        // new five.Led({pin: 10, board}).on();
-
+        driverGame = new DriverGame([10, 6], [11, 5], board);
+        handleJoystick({right: 8, up: 7, down: 9}, board);
       }
 
       if (board.id === "C") {
@@ -289,7 +257,34 @@ const init = () => {
   water = new Water();
   road = new Road(-7.5, -35.6);
 
+  createSabIcons();
   loop();
+}
+
+const createSabIcons = () => {
+  for (var i = 0; i < 4; i++) {
+    const $sabDivIcon = document.querySelector(`.saboteur_icons`);
+
+    const $onIconDiv = document.createElement('div');
+    $onIconDiv.classList.add(`sab_icon_div_${i}`);
+
+    $onIconDiv.classList.add('sab_icon_div');
+
+    const $button = document.createElement('img');
+    $button.src = './assets/saboteur_icon/button.png';
+    $button.classList.add('sab_icon');
+
+    const $finger = document.createElement('img');
+    $finger.src = './assets/saboteur_icon/finger.png';
+    $finger.classList.add('sab_icon');
+    $finger.classList.add(`finger`);
+
+    $onIconDiv.append($finger);
+    $onIconDiv.append($button);
+
+    $sabDivIcon.append($onIconDiv);
+  }
+
 }
 
 const dark = () => {

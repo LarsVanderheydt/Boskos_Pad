@@ -65,14 +65,14 @@ class Car {
 
     if (this.keys[38]) {
       if (this.velY > -this.speed) {
-        this.velY -= 3;
+        this.velY -= 2.5;
         this.angle = 0.50;
       }
     }
 
     if (this.keys[40]) {
       if (this.velY < this.speed) {
-        this.velY += 3;
+        this.velY += 2.5;
         this.angle = -0.50;
       }
     }

@@ -35,7 +35,6 @@ class DriverGame {
             } else {
               btnPushed = true;
               this.level ++;
-              console.log("test");
             }
           }
         }

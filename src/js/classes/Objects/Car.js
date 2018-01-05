@@ -95,6 +95,7 @@ class Car {
   }
 
   miniJoystickControl(dir) {
+    console.log("INSIDE JOYSTICK");
     console.log(dir);
     console.log(this.stop);
     if (this.stop) return;

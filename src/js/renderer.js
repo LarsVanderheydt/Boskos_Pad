@@ -192,18 +192,17 @@ const init = () => {
       if (board.id === 'A') {
       // LEFT SIDE OF TABLE (JOYSTICK POV)
 
-      // tilt switch game
-      const leftTop = {
-        first: { btn: 17, led: 4 },
-        second: { btn: 7, led: 19 },
-        third: { btn: 18, led: 2 }
-      };
+        // tilt switch game
+        const leftTop = {
+          first: { btn: 17, led: 4 },
+          second: { btn: 7, led: 19 },
+          third: { btn: 18, led: 2 }
+        };
 
-      trainGame = new TrainGame(leftTop, board, {
-        joystick: {x: "A1", y: "A2"},
-        rgb: {r: 3, g: 6, b: 5}
-      });
-
+        trainGame = new TrainGame(leftTop, board, {
+          joystick: {x: "A1", y: "A2"},
+          rgb: {r: 3, g: 6, b: 5}
+        });
 
         const leftBottom = {
           first: { btn: 12, led: 8 },
@@ -218,8 +217,13 @@ const init = () => {
       if (board.id === 'B') {
       // CENTER OF TABLE (JOYSTICK POV)
 
-        driverGame = new DriverGame([10, 6], [11, 5], board);
-        handleJoystick({right: 8, up: 7, down: 9}, board);
+      driverGame = new DriverGame([10, 6], [11, 5], board);
+      handleJoystick({right: 8, up: 9, down: 7}, board);
+
+        // new five.Led({pin: 8, board}).on();
+        // new five.Led({pin: 9, board}).on();
+        // new five.Led({pin: 10, board}).on();
+
       }
 
       if (board.id === "C") {

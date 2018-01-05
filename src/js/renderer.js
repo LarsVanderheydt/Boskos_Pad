@@ -12,9 +12,9 @@ const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 const Timer = require('./classes/Timer');
 
-const BeginScreen = require('./classes/ScreenState/BeginScreen');
+// const BeginScreen = require('./classes/ScreenState/BeginScreen');
 const DuringScreen = require('./classes/ScreenState/DuringScreen');
-const EndScreen = require('./classes/ScreenState/EndScreen');
+// const EndScreen = require('./classes/ScreenState/EndScreen');
 const CameraObject = require('./classes/Objects/CameraObject')
 
 const Floor = require('./classes/SceneFloor/Floor');
@@ -102,24 +102,27 @@ let joystick = {};
 
 let mousePos = {x: 0, y: 0};
 
+const $endScreen = document.querySelector(`.end_screen`);
+const $startScreen = document.querySelector(`.start_screen`);
+
 const init = () => {
   exampleUtils.initialize();
   createScene();
   createLight();
 
   // // BEGIN STATE
-  beginscreen = new BeginScreen();
-  beginscreen.name = "Beginscreentext";
+  // beginscreen = new BeginScreen();
+  // beginscreen.name = "Beginscreentext";
 
   // SECOND STATE
   duringscreen = new DuringScreen();
   duringscreen.name = "Duringscreentext";
 
   // END STATE
-  endscreen = new EndScreen();
-  endscreen.name = "Endscreentext";
+  // endscreen = new EndScreen();
+  // endscreen.name = "Endscreentext";
   setTimeout(() => {
-    endscreen.hide();
+    // endscreen.hide();
   }, 1000);
 
   //TODO: WIL NIET TOEVOEGEN
@@ -206,7 +209,6 @@ const init = () => {
 
       if (board.id === 'A') {
       // LEFT SIDE OF TABLE (JOYSTICK POV)
-      // train game
 
       // tilt switch game
       const leftTop = {
@@ -220,7 +222,20 @@ const init = () => {
         rgb: {r: 3, g: 6, b: 5}
       });
 
+<<<<<<< HEAD
         // sound sensor game
+=======
+//       const led = new five.Led.RGB({
+//     pins: {
+//       red: 3,
+//       green: 6,
+//       blue: 5
+//     }, board
+//   });
+// led.color("#FF0000");
+
+
+>>>>>>> d191e0508e4f2a9433f943b0f7b4c308fe059a30
         const leftBottom = {
           first: { btn: 12, led: 8 },
           second: { btn: 11, led: 10 },
@@ -253,7 +268,6 @@ const init = () => {
         }
         gateGame = new GateGame(rightTop, board, "A1", "A2");
 
-        // night
         const rightBottom = {
           first: { btn: 4, led: 7 },
           second: { btn: 2, led: 5 },
@@ -451,6 +465,8 @@ let addFog = false;
 let showFinishScreen = false;
 let showStartScreen = false;
 let timeout = true;
+let resetTimer = "";
+let start = true;
 
 const loop = () => {
   scene.fog = new THREE.Fog(Colors.fog, fogThickness, 700);
@@ -478,8 +494,6 @@ const loop = () => {
   }, 60000);
 
   plane.fly();
-
-
 
 
 
@@ -625,7 +639,6 @@ const loop = () => {
       train.move();
     }, 60000);
 
-    //TODO: GATE TERUG open + MAAR 1 gate sluit ?
   }
 
   if (trainGame.complete){
@@ -635,50 +648,61 @@ const loop = () => {
 
   }
 
-
-
-  //TODO: SCHERMEN TERUG REMOVEN !
   if (car.m.goblin.position.x >= 160){
   // if (car.m.goblin.position.x >= 20){
     showFinishScreen = true;
+    timeout = true;
+    start = false;
   }
-
 
   if (showFinishScreen) {
     gameTimer.stop();
-    endscreen.show();
-    car.stop = true;
+
+    document.querySelector(`.end_screen_time`).innerHTML = $timer.innerHTML;
+    $endScreen.classList.remove('hide');
+
     addFog = false;
 
+    if (!start) {
+      car.stop = true;
+    }
+
     if (timeout) {
-      setTimeout(() => {
-        car.m.goblin.position.x = 0;
-        car.mesh.position.x = 0;
-        endscreen.hide();
-
-        showFinishScreen = false;
-        car.stop = false;
-        beginscreen.show();
-
-        seconds = 0;
-        minutes = 0;
-        gameTimer.reset(1000);
-      }, 3000);
+      resetGame();
       timeout = false;
     }
   }
-
-
-
 
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 
-const startTimer = () => {
+const resetGame = () => {
+  resetTimer = setTimeout(() => {
+    const hasClass = $startScreen.classList.contains('hide');
+    car.m.goblin.position.x = 0;
+    car.mesh.position.x = 0;
 
+
+    if (showFinishScreen) {
+      $startScreen.classList.remove('hide');
+    }
+
+    $endScreen.classList.add('hide');
+
+    showFinishScreen = false;
+    seconds = 0;
+    minutes = 0;
+    $timer.innerHTML = '00:00';
+    timeout = false;
+
+  }, 3000);
+}
+
+const startTimer = () => {
   gameTimer = new Timer(() => {
+
     let secString = "00:00";
 
     seconds < 60 ? seconds ++ : seconds = 0;
@@ -692,25 +716,27 @@ const startTimer = () => {
   }, 1000);
 }
 
-let start = false;
-
 window.addEventListener("keydown", function (e) {
     car.keys[e.keyCode] = true;
 
     // in a button press
     if (e.keyCode === 32) {
+      start = true;
       if (start) {
+        if (resetTimer) {
+          clearTimeout(resetTimer);
+        }
 
-        // scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
-      } else {
-        startTimer();
-        beginscreen.hide();
+        if (gameTimer) {
+          gameTimer.reset(1000);
+        } else {
+          startTimer();
+        }
         car.stop = false;
+        showFinishScreen = false;
         addFog = true;
-
+        $startScreen.classList.add('hide');
       }
-
-      start = !start;
     }
 
 });

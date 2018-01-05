@@ -18,3 +18,12 @@ body { margin: 0; }
 	width: 4rem;
 	text-align: center;
 }
+
+.screens {
+	position: absolute;
+	z-index: 999;
+}
+
+.hide {
+	visibility: hidden;
+}

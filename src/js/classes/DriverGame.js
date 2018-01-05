@@ -23,6 +23,9 @@ class DriverGame {
     this.buttons.forEach(btn => {
       btn.button.on('press', () => {
         this.buttons[push].led.off();
+
+        document.querySelector(`.start_screen`).classList.add('hide');
+
         if (this.gameStarted && this.level !== null) {
           if (!btnPushed) {
             if (btn.id === push ) {
@@ -76,7 +79,6 @@ class DriverGame {
   }
 
   reset() {
-    console.log('driver reset');
     this.gameStarted = false;
     this.level = null;
     this.buttons.forEach(btn => btn.led.off());

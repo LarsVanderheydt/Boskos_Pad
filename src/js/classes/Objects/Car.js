@@ -95,6 +95,8 @@ class Car {
   }
 
   miniJoystickControl(dir) {
+    console.log(dir);
+    console.log(this.stop);
     if (this.stop) return;
 
     this.velX = 0;
@@ -122,6 +124,7 @@ class Car {
   }
 
   move() {
+    //console.log("MOVE");
     this.velY *= this.friction;
     this.velX *= this.friction;
 

@@ -220,16 +220,6 @@ const init = () => {
         rgb: {r: 3, g: 6, b: 5}
       });
 
-//       const led = new five.Led.RGB({
-//     pins: {
-//       red: 3,
-//       green: 6,
-//       blue: 5
-//     }, board
-//   });
-// led.color("#FF0000");
-
-
         // sound sensor game
         const leftBottom = {
           first: { btn: 12, led: 8 },
@@ -245,7 +235,7 @@ const init = () => {
       // CENTER OF TABLE (JOYSTICK POV)
 
       driverGame = new DriverGame([10, 6], [11, 5], board);
-      handleJoystick({right: 8, up: 7, down: 9}, board);
+      handleJoystick({right: 8, up: 9, down: 7}, board);
 
         // new five.Led({pin: 8, board}).on();
         // new five.Led({pin: 9, board}).on();

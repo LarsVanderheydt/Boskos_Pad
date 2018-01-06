@@ -222,20 +222,7 @@ const init = () => {
         rgb: {r: 3, g: 6, b: 5}
       });
 
-<<<<<<< HEAD
         // sound sensor game
-=======
-//       const led = new five.Led.RGB({
-//     pins: {
-//       red: 3,
-//       green: 6,
-//       blue: 5
-//     }, board
-//   });
-// led.color("#FF0000");
-
-
->>>>>>> d191e0508e4f2a9433f943b0f7b4c308fe059a30
         const leftBottom = {
           first: { btn: 12, led: 8 },
           second: { btn: 11, led: 10 },

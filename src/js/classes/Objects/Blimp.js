@@ -42,6 +42,10 @@ class Blimp {
         this.pause = true;
         this.mesh.position.x = 200;
         this.mesh.position.z = -70;
+
+        setTimeout(function () {
+          this.pause = false;
+        }, 2000);
       } else {
         this.mesh.position.z += this.speed * Math.sin(-this.angle);
         this.mesh.position.x += this.speed * Math.cos(-this.angle);

@@ -35,16 +35,20 @@ class Train {
   }
 
   move() {
+    let moving = false;
     if (!this.pause) {
       if (this.mesh.position.z >= stopTrainAt) {
         this.pause = true;
         this.mesh.position.x = 43;
         this.mesh.position.z = -90;
+        moving = false;
       } else {
         this.mesh.position.z += this.speed * Math.cos(this.angle);
         this.mesh.position.x += this.speed * Math.sin(this.angle);
+        moving = true;
       }
     }
+    return moving;
   }
 }
 

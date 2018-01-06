@@ -43,7 +43,6 @@ class Tree {
     //VERTICAAL
     this.mesh.rotation.x += Math.cos(Date.now() * 0.0008) * Math.PI * 0.0005;
     window.requestAnimationFrame(() => this.wind());
-
   }
 
 }

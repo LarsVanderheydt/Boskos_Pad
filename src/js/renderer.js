@@ -225,8 +225,6 @@ const init = () => {
 
         driverGame = new DriverGame([10, 6], [11, 5], board);
 
-        // BUG: testing this on 06/01/18
-
         const startButtons = [
           new five.Button({pin: 11, board}),
           new five.Button({pin: 5, board})
@@ -563,7 +561,6 @@ const loop = () => {
   if (!gateGame.closeGate && gateGame.closed && openGate) {
     gateGame.closed = gate1.open();
     gateGame.closed = gate2.open();
-    console.log('opening');
   } else {
     openGate = false;
   }
@@ -625,8 +622,9 @@ const loop = () => {
           break;
 
         case 'Gate':
-        pushedGate = false;
         openGate = true;
+
+        pushedGate = false;
         obstacles.shift();
         driverGame.complete = false;
         setTimeout(() => {
@@ -698,6 +696,7 @@ const loop = () => {
     if (timeout) {
       resetGame();
       timeout = false;
+      didReset = false;
     }
   }
 
@@ -706,26 +705,28 @@ const loop = () => {
   requestAnimationFrame(loop);
 }
 
+let didReset = false;
 const resetGame = () => {
   resetTimer = setTimeout(() => {
-    const hasClass = $startScreen.classList.contains('hide');
-    car.m.goblin.position.x = 0;
-    car.mesh.position.x = 0;
+    if (!didReset) {
+      const hasClass = $startScreen.classList.contains('hide');
+      car.m.goblin.position.x = 0;
+      car.mesh.position.x = 0;
 
 
-    if (showFinishScreen) {
-      $startScreen.classList.remove('hide');
+      if (showFinishScreen) {
+        $startScreen.classList.remove('hide');
+      }
+
+      $endScreen.classList.add('hide');
+
+      showFinishScreen = false;
+      seconds = 0;
+      minutes = 0;
+      $timer.innerHTML = '00:00';
+      didReset = true;
     }
-
-    $endScreen.classList.add('hide');
-
-    showFinishScreen = false;
-    seconds = 0;
-    minutes = 0;
-    $timer.innerHTML = '00:00';
-    timeout = false;
-
-  }, 3000);
+  }, 5000);
 }
 
 const startTimer = () => {
@@ -749,6 +750,7 @@ window.addEventListener("keydown", function (e) {
 
     // in a button press
     if (e.keyCode === 32) {
+
       start = true;
       if (start) {
         if (resetTimer) {

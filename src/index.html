@@ -1,6 +1,26 @@
 <!DOCTYPE html>
 <html>
   <head>
+    <script type="text/javascript">
+      WebFontConfig = {
+        custom: {
+          families: ['neatly'],
+          urls: ['assets/fonts/neatly.css']
+        }
+      };
+
+      (function() {
+        var wf = document.createElement('script');
+        wf.src = '/js/vendors/webfontloader.min.js';
+        wf.src = ('https:' == document.location.protocol ? 'https' : 'http') +
+          '://ajax.googleapis.com/ajax/libs/webfont/1/webfont.js';
+        wf.type = 'text/javascript';
+        wf.async = 'true';
+        var s = document.getElementsByTagName('script')[0];
+        s.parentNode.insertBefore(wf, s);
+      })();
+    </script>
+
     <meta charset="UTF-8">
     <title>Experimental Installations</title>
     <link rel="stylesheet" href="./css/style.css">

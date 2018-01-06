@@ -1,7 +1,12 @@
 * { cursor: none; }
 
+@font-face {
+  font-family: neatly;
+  src: url(../assets/fonts/neatly.woff);
+}
+
 body {
-  font-family: Verdana, Geneva, sans-serif;
+  font-family: neatly, arial, sans-serif;
   margin: 0;
 }
 
@@ -79,6 +84,8 @@ body {
 }
 
 @keyframes finger_anim {
-  from { margin-left: 3rem},
-  to { margin-left: 4rem }
+  from { margin-left: 3rem; }
+
+  ,
+  to { margin-left: 4rem; }
 }

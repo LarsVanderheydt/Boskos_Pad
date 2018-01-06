@@ -12,9 +12,6 @@ const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 const Timer = require('./classes/Timer');
 
-// const BeginScreen = require('./classes/ScreenState/BeginScreen');
-const DuringScreen = require('./classes/ScreenState/DuringScreen');
-// const EndScreen = require('./classes/ScreenState/EndScreen');
 const CameraObject = require('./classes/Objects/CameraObject')
 
 const Floor = require('./classes/SceneFloor/Floor');
@@ -110,21 +107,6 @@ const init = () => {
   createScene();
   createLight();
 
-  // // BEGIN STATE
-  // beginscreen = new BeginScreen();
-  // beginscreen.name = "Beginscreentext";
-
-  // SECOND STATE
-  duringscreen = new DuringScreen();
-  duringscreen.name = "Duringscreentext";
-
-  // END STATE
-  // endscreen = new EndScreen();
-  // endscreen.name = "Endscreentext";
-  setTimeout(() => {
-    // endscreen.hide();
-  }, 1000);
-
   //TODO: WIL NIET TOEVOEGEN
   // cameraObject = new CameraObject();
   // scene.add(cameraObject.mesh)
@@ -210,19 +192,18 @@ const init = () => {
       if (board.id === 'A') {
       // LEFT SIDE OF TABLE (JOYSTICK POV)
 
-      // tilt switch game
-      const leftTop = {
-        first: { btn: 17, led: 4 },
-        second: { btn: 7, led: 19 },
-        third: { btn: 18, led: 2 }
-      };
+        // tilt switch game
+        const leftTop = {
+          first: { btn: 17, led: 4 },
+          second: { btn: 7, led: 19 },
+          third: { btn: 18, led: 2 }
+        };
 
-      trainGame = new TrainGame(leftTop, board, {
-        joystick: {x: "A1", y: "A2"},
-        rgb: {r: 3, g: 6, b: 5}
-      });
+        trainGame = new TrainGame(leftTop, board, {
+          joystick: {x: "A1", y: "A2"},
+          rgb: {r: 3, g: 6, b: 5}
+        });
 
-        // sound sensor game
         const leftBottom = {
           first: { btn: 12, led: 8 },
           second: { btn: 11, led: 10 },
@@ -280,7 +261,34 @@ const init = () => {
   water = new Water();
   road = new Road(-7.5, -35.6);
 
+  createSabIcons();
   loop();
+}
+
+const createSabIcons = () => {
+  for (var i = 0; i < 4; i++) {
+    const $sabDivIcon = document.querySelector(`.saboteur_icons`);
+
+    const $onIconDiv = document.createElement('div');
+    $onIconDiv.classList.add(`sab_icon_div_${i}`);
+
+    $onIconDiv.classList.add('sab_icon_div');
+
+    const $button = document.createElement('img');
+    $button.src = './assets/saboteur_icon/button.png';
+    $button.classList.add('sab_icon');
+
+    const $finger = document.createElement('img');
+    $finger.src = './assets/saboteur_icon/finger.png';
+    $finger.classList.add('sab_icon');
+    $finger.classList.add(`finger`);
+
+    $onIconDiv.append($finger);
+    $onIconDiv.append($button);
+
+    $sabDivIcon.append($onIconDiv);
+  }
+
 }
 
 const dark = () => {

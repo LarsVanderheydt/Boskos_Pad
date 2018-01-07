@@ -112,7 +112,7 @@ let resetTimer = "";
 let start = true;
 
 let startTrainAfterCompleting = false;
-
+let didReset = false;
 
 const init = () => {
   createSabIcons();
@@ -120,6 +120,7 @@ const init = () => {
   exampleUtils.initialize();
   createScene();
   createLight();
+  hideIcons();
 
   //TODO: WIL NIET TOEVOEGEN
   // cameraObject = new CameraObject();
@@ -296,7 +297,7 @@ const init = () => {
 }
 
 const createSabIcons = () => {
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 5; i++) {
     const $sabDivIcon = document.querySelector(`.saboteur_icons`);
 
     const $onIconDiv = document.createElement('div');
@@ -488,7 +489,6 @@ const loop = () => {
   if (!addFog && fogThickness >= 0) {
     fogThickness -= 3;
   }
-
 
   car.arrowControl();
 
@@ -686,6 +686,8 @@ const loop = () => {
 
     document.querySelector(`.end_screen_time`).innerHTML = $timer.innerHTML;
     $endScreen.classList.remove('hide');
+    $timer.classList.add('hide');
+    hideIcons();
 
     addFog = false;
 
@@ -700,12 +702,31 @@ const loop = () => {
     }
   }
 
+  if ($endScreen.classList.contains('hide') && $startScreen.classList.contains('hide')) {
+    $timer.classList.remove('hide');
+    showIcons();
+    document.querySelector(`.sab_icon_div_4`).classList.add('hide');
+  }
+
   exampleUtils.run();
   renderer.render(scene, camera);
   requestAnimationFrame(loop);
 }
 
-let didReset = false;
+const showIcons = () => {
+  for (var i = 0; i < 4; i++) {
+    const $icon = document.querySelector(`.sab_icon_div_${i}`);
+    $icon.classList.remove('hide');
+  }
+}
+
+const hideIcons = () => {
+  for (var i = 0; i < 4; i++) {
+    const $icon = document.querySelector(`.sab_icon_div_${i}`);
+    $icon.classList.add('hide');
+  }
+}
+
 const resetGame = () => {
   resetTimer = setTimeout(() => {
     if (!didReset) {
@@ -713,12 +734,11 @@ const resetGame = () => {
       car.m.goblin.position.x = 0;
       car.mesh.position.x = 0;
 
-
-      if (showFinishScreen) {
-        $startScreen.classList.remove('hide');
-      }
-
+      $startScreen.classList.remove('hide');
       $endScreen.classList.add('hide');
+      $timer.classList.add('hide');
+      document.querySelector(`.sab_icon_div_4`).classList.remove('hide');
+      hideIcons();
 
       showFinishScreen = false;
       seconds = 0;
@@ -766,6 +786,7 @@ window.addEventListener("keydown", function (e) {
         showFinishScreen = false;
         addFog = true;
         $startScreen.classList.add('hide');
+        document.querySelector(`.sab_icon_div_4`).classList.add('hide');
       }
     }
 

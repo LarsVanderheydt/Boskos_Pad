@@ -105,6 +105,21 @@ class GateGame {
     up = true;
   }
 
+  fullReset() {
+    walkTimer, sequenceTimer, countdownTimer, blinkTimer = '';
+    blink = true;
+    up = true;
+    gameStarted = false;
+    random, index, push, i = 0;
+    leds = [0, 1, 2];
+    gameTimer = '';
+    complete = false;
+    timesFailed = 0;
+    this.closeGate = false;
+    this.closed = false;
+    this.initSequences();
+  }
+
   initSequences() {
     this.countdownSequence();
     countdownTimer.stop();

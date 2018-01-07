@@ -50,25 +50,31 @@ body {
 }
 
 .sab_icon_div_0 {
-  margin-top: 13rem;
-  margin-left: 2rem;
+  margin-top: 17vw;
+  margin-left: 3vw;
 }
 
 .sab_icon_div_1 {
-  margin-top: 37rem;
-  margin-left: 2rem;
+  margin-top: 45vw;
+  margin-left: 3vw;
 }
 
 .sab_icon_div_2 {
-  margin-top: 37rem;
-  margin-left: 87rem;
-  transform: scale(-1, 1);
+  margin-top: 17vw;
+  margin-left: 97vw;
+  transform: rotate(180deg);
 }
 
 .sab_icon_div_3 {
-  margin-top: 13rem;
-  margin-left: 87rem;
-  transform: scale(-1, 1);
+  margin-top: 45vw;
+  margin-left: 97vw;
+  transform: rotate(180deg);
+}
+
+.sab_icon_div_4 {
+  margin-top: 60vw;
+  margin-left: 50vw;
+  transform: rotate(-90deg);
 }
 
 .sab_icon {
@@ -83,9 +89,30 @@ body {
   animation: finger_anim 1s ease-out infinite alternate-reverse;
 }
 
-@keyframes finger_anim {
-  from { margin-left: 3rem; }
+.start_screen {
+  width: 100vw;
+  display: flex;
+  flex-direction: column;
+  height: 50vw;
+  justify-content: center;
+}
 
-  ,
+.end_screen {
+  position: absolute;
+  left: 48%;
+  top: 38%;
+}
+
+.end_screen_time {
+  font-weight: bold;
+}
+
+@keyframes finger_anim {
+  from { margin-left: 3rem; },
   to { margin-left: 4rem; }
+}
+
+@keyframes opacity {
+  from { opacity: 0; },
+  to { opacity: 1; }
 }

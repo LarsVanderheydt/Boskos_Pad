@@ -1,13 +1,3 @@
-/*
-  28/12/'17'
-  Joystick:
-    Red: Right
-    Oranje: Up
-    Wit: Down
-    Zwart: Gnd
-*/
-
-const {remote} = require('electron');
 const five = require('johnny-five');
 const Colors = require('./objects/Colors');
 const Timer = require('./classes/Timer');
@@ -33,11 +23,13 @@ const Chalet = require('./classes/Objects/Chalet');
 const Gate = require('./classes/Objects/Gate');
 const Barrier = require('./classes/Objects/Barrier');
 
-// saboteur games
-/*
-  note: duplicates off game classes for solid use of all leds
+//README////////////////////////////////////////////////////
+                            /*
+note: duplicates off game classes for solid use of all leds
   -- one class and 2 instances = leds will fail to work normaly --
-*/
+                            */
+
+// saboteur games
 const FogGame = require('./classes/SaboteurGames/FogGame');
 const GateGame = require('./classes/SaboteurGames/GateGame');
 const TrainGame = require('./classes/SaboteurGames/TrainGame');
@@ -59,9 +51,7 @@ const boards = new five.Boards([
 // "A", "B", "C"
 // ]);
 
-console.log(boards);
-
-let game;
+// console.log(boards);
 
 const Readable = require('stream').Readable;
 class MyStream extends Readable {
@@ -84,28 +74,53 @@ let scene, camera, fieldOfView, aspectRatio, nearPlane, farPlane, HEIGHT, WIDTH,
 let train, cloud, tracks, sky, floor, water, car, tree, flower, plane, kayak, house1, chalet, gate1, gate2, barrier1, barrier2, cameraObject;
 let world;
 
+// games
 let fogGame = "";
 let gateGame = "";
 let trainGame = "";
 let nightTimeGame = "";
 let driverGame = "";
-let openGate = false;
 
+// main timer
 let gameTimer = "";
 let minutes = 0;
 let seconds = 0;
 
 let joystick = {};
 
-let mousePos = {x: 0, y: 0};
-
 const $endScreen = document.querySelector(`.end_screen`);
 const $startScreen = document.querySelector(`.start_screen`);
 
+const obstacles = [];
+let startDriverGame = false;
+
+let pushedTrain = false;
+let pushedDark = false;
+let pushedFog = false;
+let pushedGate = false;
+
+let openBarriers = false;
+let turnLightOn = false;
+let openGate = false;
+
+let fogThickness = 0;
+let addFog = false;
+let showFinishScreen = false;
+
+let timeout = true;
+let resetTimer = "";
+let start = true;
+
+let startTrainAfterCompleting = false;
+let didReset = false;
+
 const init = () => {
+  createSabIcons();
+
   exampleUtils.initialize();
   createScene();
   createLight();
+  hideIcons();
 
   //TODO: WIL NIET TOEVOEGEN
   // cameraObject = new CameraObject();
@@ -113,6 +128,7 @@ const init = () => {
 
   car = new Car();
   car.name = "Car";
+  car.stop = true;
 
   sky = new Sky();
   sky.mesh.name = "sky";
@@ -137,14 +153,6 @@ const init = () => {
   train.mesh.position.z = -90;
   scene.add(train.mesh);
 
-  const startTrainAfter = 60000 * 2;
-  setInterval(() => {
-    if (car.x >= 30) {
-      //train.pause = false;
-    }
-  }, startTrainAfter);
-
-
   blimp = new Blimp();
   blimp.mesh.position.x = 200;
   blimp.mesh.position.z = -70;
@@ -156,8 +164,7 @@ const init = () => {
   plane.mesh.position.z = -90;
   scene.add(plane.mesh);
 
-  // start plane again after 4 min (when stopped)
-  const startPlaneAfter = 60000 * 4;
+  const startPlaneAfter = 60000 * 1.2;
   setInterval(() => {
     plane.pause = false;
   }, startPlaneAfter);
@@ -217,12 +224,37 @@ const init = () => {
       if (board.id === 'B') {
       // CENTER OF TABLE (JOYSTICK POV)
 
-      driverGame = new DriverGame([10, 6], [11, 5], board);
-      handleJoystick({right: 8, up: 9, down: 7}, board);
+        driverGame = new DriverGame([10, 6], [11, 5], board);
 
-        // new five.Led({pin: 8, board}).on();
-        // new five.Led({pin: 9, board}).on();
-        // new five.Led({pin: 10, board}).on();
+        const startButtons = [
+          new five.Button({pin: 11, board}),
+          new five.Button({pin: 5, board})
+        ];
+
+        startButtons.forEach(btn => {
+          btn.on('press', () => {
+            start = true;
+
+            if (start) {
+              if (resetTimer) {
+                clearTimeout(resetTimer);
+              }
+
+              if (gameTimer) {
+                gameTimer.reset(1000);
+              } else {
+                startTimer();
+              }
+
+              car.stop = false;
+              showFinishScreen = false;
+              addFog = true;
+              $startScreen.classList.add('hide');
+            }
+          });
+        });
+
+        handleJoystick({right: 8, up: 9, down: 7}, board);
 
       }
 
@@ -261,12 +293,11 @@ const init = () => {
   water = new Water();
   road = new Road(-7.5, -35.6);
 
-  createSabIcons();
   loop();
 }
 
 const createSabIcons = () => {
-  for (var i = 0; i < 4; i++) {
+  for (var i = 0; i < 5; i++) {
     const $sabDivIcon = document.querySelector(`.saboteur_icons`);
 
     const $onIconDiv = document.createElement('div');
@@ -445,23 +476,6 @@ const createLight = () => {
   scene.add(ambientLight);
 }
 
-const obstacles = [];
-let startDriverGame = false;
-
-let pushedTrain = false;
-let pushedDark = false;
-let pushedFog = false;
-
-let openBarriers = false;
-let turnLightOn = false;
-
-let fogThickness = 0;
-let addFog = false;
-let showFinishScreen = false;
-let showStartScreen = false;
-let timeout = true;
-let resetTimer = "";
-let start = true;
 
 const loop = () => {
   scene.fog = new THREE.Fog(Colors.fog, fogThickness, 700);
@@ -476,55 +490,31 @@ const loop = () => {
     fogThickness -= 3;
   }
 
-  // trees.mesh.wind();
-
-  //console.log(car.m.goblin.position.x);
   car.arrowControl();
 
   sky.float();
   kayak.wiggle();
 
-  setTimeout(() => {
-    blimp.fly();
-  }, 60000);
-
+  blimp.fly();
   plane.fly();
 
 
-
-  if (gateGame.closeGate && !gateGame.closed) {
-
-    gateGame.closed = gate1.close();
-    gateGame.closed = gate2.close();
-
-  } else {
-    gateGame.closeGate = false;
+  // move train when game is ended
+  if (startTrainAfterCompleting) {
+    const moving = train.move();
+    if (!moving) startTrainAfterCompleting = false;
   }
-
-
-  if (!gateGame.closeGate && gateGame.closed && openGate) {
-
-    gateGame.closed = gate1.open();
-    gateGame.closed = gate2.open();
-
-  } else {
-    openGate = false;
-  }
-
-
-
-
-
-
-
 
   // close barriers and push the obstacle to the array
   if (trainGame.complete === true) {
+
     if (!pushedTrain) {
       obstacles.push('Train');
       pushedTrain = true;
       startDriverGame = true;
+      startTrainAfterCompleting = true;
     }
+
     if (!barrier1.close() && !barrier2.close() && !openBarriers) {
       barrier1.close();
       barrier2.close();
@@ -532,6 +522,7 @@ const loop = () => {
       trainGame.complete = false;
       trainGame.reset();
     }
+
   }
 
   // open the barriers when driver completed the game
@@ -555,6 +546,26 @@ const loop = () => {
     light();
   }
 
+  if (gateGame.closeGate && !gateGame.closed) {
+    if (!pushedGate) {
+      obstacles.push('Gate');
+      pushedGate = true;
+    }
+
+    gateGame.closed = gate1.close();
+    gateGame.closed = gate2.close();
+  } else {
+    gateGame.closeGate = false;
+  }
+
+  if (!gateGame.closeGate && gateGame.closed && openGate) {
+    gateGame.closed = gate1.open();
+    gateGame.closed = gate2.open();
+  } else {
+    openGate = false;
+  }
+
+
 
   if (fogGame.level > 0 && !fogGame.noFog) {
     if (!pushedFog) {
@@ -577,10 +588,10 @@ const loop = () => {
       switch (obstacles[0]) {
         case 'Train':
         openBarriers = true;
-        obstacles.shift();
         pushedTrain = false;
-        driverGame.complete = false;
 
+        obstacles.shift();
+        driverGame.complete = false;
         setTimeout(() => {
           trainGame.fullReset();
         }, 1000);
@@ -589,26 +600,36 @@ const loop = () => {
         case 'Dark':
         nightTimeGame.goDark = false;
         turnLightOn = true;
+        pushedDark = false;
 
+        obstacles.shift();
+        driverGame.complete = false;
         setTimeout(() => {
           nightTimeGame.fullReset();
         }, 1000);
-
-        obstacles.shift();
-        pushedDark = false;
-        driverGame.complete = false;
           break;
 
         case 'Fog':
         scene.fog = new THREE.Fog(Colors.fog, 1000, 10000);
-        obstacles.shift();
         pushedFog = false;
-        driverGame.complete = false;
         fogGame.noFog = true;
+
+        obstacles.shift();
+        driverGame.complete = false;
         setTimeout(() => {
           fogGame.fullReset();
         }, 1000);
+          break;
 
+        case 'Gate':
+        openGate = true;
+
+        pushedGate = false;
+        obstacles.shift();
+        driverGame.complete = false;
+        setTimeout(() => {
+          gateGame.fullReset();
+        }, 5000);
           break;
       }
     }
@@ -631,8 +652,19 @@ const loop = () => {
     setTimeout(() => {
       barrier1.close();
       barrier2.close();
-      train.move();
-    }, 60000);
+      const moving = train.move();
+      if (!moving) {
+        // open the barriers when driver completed the game
+        openBarriers = true;
+        if (openBarriers) {
+          const open1 = barrier1.open();
+          const open2 = barrier2.open();
+          if (open1 && open2) {
+            openBarriers = false;
+          }
+        }
+      }
+    }, 5000);
 
   }
 
@@ -640,11 +672,10 @@ const loop = () => {
    barrier1.close();
    barrier2.close();
    train.move();
-
   }
 
-  if (car.m.goblin.position.x >= 160){
-  // if (car.m.goblin.position.x >= 20){
+  // if (car.m.goblin.position.x >= 160){
+  if (car.m.goblin.position.x >= 20){
     showFinishScreen = true;
     timeout = true;
     start = false;
@@ -655,6 +686,8 @@ const loop = () => {
 
     document.querySelector(`.end_screen_time`).innerHTML = $timer.innerHTML;
     $endScreen.classList.remove('hide');
+    $timer.classList.add('hide');
+    hideIcons();
 
     addFog = false;
 
@@ -665,7 +698,14 @@ const loop = () => {
     if (timeout) {
       resetGame();
       timeout = false;
+      didReset = false;
     }
+  }
+
+  if ($endScreen.classList.contains('hide') && $startScreen.classList.contains('hide')) {
+    $timer.classList.remove('hide');
+    showIcons();
+    document.querySelector(`.sab_icon_div_4`).classList.add('hide');
   }
 
   exampleUtils.run();
@@ -673,26 +713,40 @@ const loop = () => {
   requestAnimationFrame(loop);
 }
 
+const showIcons = () => {
+  for (var i = 0; i < 4; i++) {
+    const $icon = document.querySelector(`.sab_icon_div_${i}`);
+    $icon.classList.remove('hide');
+  }
+}
+
+const hideIcons = () => {
+  for (var i = 0; i < 4; i++) {
+    const $icon = document.querySelector(`.sab_icon_div_${i}`);
+    $icon.classList.add('hide');
+  }
+}
+
 const resetGame = () => {
   resetTimer = setTimeout(() => {
-    const hasClass = $startScreen.classList.contains('hide');
-    car.m.goblin.position.x = 0;
-    car.mesh.position.x = 0;
+    if (!didReset) {
+      const hasClass = $startScreen.classList.contains('hide');
+      car.m.goblin.position.x = 0;
+      car.mesh.position.x = 0;
 
-
-    if (showFinishScreen) {
       $startScreen.classList.remove('hide');
+      $endScreen.classList.add('hide');
+      $timer.classList.add('hide');
+      document.querySelector(`.sab_icon_div_4`).classList.remove('hide');
+      hideIcons();
+
+      showFinishScreen = false;
+      seconds = 0;
+      minutes = 0;
+      $timer.innerHTML = '00:00';
+      didReset = true;
     }
-
-    $endScreen.classList.add('hide');
-
-    showFinishScreen = false;
-    seconds = 0;
-    minutes = 0;
-    $timer.innerHTML = '00:00';
-    timeout = false;
-
-  }, 3000);
+  }, 5000);
 }
 
 const startTimer = () => {
@@ -716,6 +770,7 @@ window.addEventListener("keydown", function (e) {
 
     // in a button press
     if (e.keyCode === 32) {
+
       start = true;
       if (start) {
         if (resetTimer) {
@@ -731,10 +786,12 @@ window.addEventListener("keydown", function (e) {
         showFinishScreen = false;
         addFog = true;
         $startScreen.classList.add('hide');
+        document.querySelector(`.sab_icon_div_4`).classList.add('hide');
       }
     }
 
 });
+
 window.addEventListener("keyup", function (e) {
     car.keys[e.keyCode] = false;
 });

@@ -1,0 +1,6 @@
+@font-face {
+  font-family: neatly;
+  src: url(neatly.woff2) format('woff2'), url(neatly.woff) format('woff');
+  font-weight: normal;
+  font-style: normal;
+}

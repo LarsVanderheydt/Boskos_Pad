@@ -1,10 +1,20 @@
 {
   "name": "electron-quick-start",
   "version": "1.0.0",
-  "description": "A minimal Electron application",
+  "productName": "Boskos Pad",
+  "build": {
+    "appId": "Boskos Pad",
+    "mac": {
+      "category": "Game",
+      "icon": "./src/assets/icons/512x512.png.icns"
+    }
+  },
+  "description": "A game created for JEFF",
   "main": "main.js",
   "scripts": {
-    "start": "./node_modules/.bin/electron-rebuild && electron ."
+    "start": "./node_modules/.bin/electron-rebuild && electron .",
+    "pack": "electron-builder --dir",
+    "dist": "electron-builder"
   },
   "repository": "https://github.com/electron/electron-quick-start",
   "keywords": [
@@ -18,6 +28,7 @@
   "license": "CC0-1.0",
   "devDependencies": {
     "electron": "~1.7.8",
+    "electron-builder": "^19.50.0",
     "electron-rebuild": "^1.6.0"
   },
   "dependencies": {

@@ -2,8 +2,6 @@
 
 ### a project made for [JEFF](https://www.jeffestival.be/) festival.
 
-this project was made for the class Experimental Installations.
-
 ### technologies used in this project are
 - [Johnny Five](http://johnny-five.io/)
 - [electron](https://electronjs.org/docs)

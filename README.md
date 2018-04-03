@@ -1,5 +1,5 @@
 # Boskos Pad
-### An interactive game/expirience for children made for [JEFF](https://www.jeffestival.be/) festival.
+> An interactive game/expirience for children made for [JEFF](https://www.jeffestival.be/) festival.
 
 ### Technologies used in this project are
 - [Johnny Five](http://johnny-five.io/)

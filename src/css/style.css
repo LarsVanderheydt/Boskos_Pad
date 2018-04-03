@@ -108,6 +108,7 @@ body {
 }
 
 @keyframes finger_anim {
+<<<<<<< HEAD
   from { margin-left: 3rem; },
   to { margin-left: 4rem; }
 }
@@ -115,4 +116,10 @@ body {
 @keyframes opacity {
   from { opacity: 0; },
   to { opacity: 1; }
+=======
+  from { margin-left: 3rem; }
+
+  ,
+  to { margin-left: 4rem; }
+>>>>>>> 5a478cdaee01ee5c0536d444b815e195052e3ab9
 }

@@ -675,7 +675,7 @@ const loop = () => {
   }
 
   // if (car.m.goblin.position.x >= 160){
-  if (car.m.goblin.position.x >= 20){
+  if (car.m.goblin.position.x >= 200){
     showFinishScreen = true;
     timeout = true;
     start = false;
@@ -746,7 +746,7 @@ const resetGame = () => {
       $timer.innerHTML = '00:00';
       didReset = true;
     }
-  }, 5000);
+  }, 10000);
 }
 
 const startTimer = () => {

@@ -5,6 +5,7 @@
 - [Johnny Five](http://johnny-five.io/)
 - [Electron](https://electronjs.org/docs)
 - [ThreeJS](https://threejs.org/)
+- [Goblin.js as physics engine](http://www.goblinphysics.com/)
 - Blender to make all 3D models
 - 3 Arduino uno's to power the buttons, joystick and sensors
 
